@@ -13,7 +13,7 @@ from modules.load_state import load_state
 from val import normalize, pad_width
 from flask_socketio import SocketIO,emit
 from GlobalHelpers import accuracy_queue
-
+from humain import Human
 
 
 class ImageReader(object):
@@ -69,6 +69,7 @@ class VideoReader(object):
         if not was_read:
             raise StopIteration
         return img
+
 
 
 def infer_fast(net, img, net_input_height_size, stride, upsample_ratio, cpu,
@@ -661,6 +662,6 @@ def start_planks(source=0,vid=None):
     run_demo(net, frame_provider, height_size, cpu)
 if __name__ == '__main__':
 
-    vid = 'mayank back raise.mp4'
+    vid = 'mayank quick start.mp4'
     start_planks(0, vid)
     

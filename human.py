@@ -1,5 +1,19 @@
 from PostureUtil import Point
 
+
+LEFT = 100
+RIGHT = 200
+HIP = 1
+KNEE = 2
+NOSE = 3
+ELBOW = 4
+SHOULDER = 5
+CHEST = 6
+EYE = 7
+WRIST = 8
+ANKLE = 9
+EAR = 10
+
 class Human(object):
     def __init__(self):
         self.initPartsDict();
@@ -11,45 +25,34 @@ class Human(object):
     def getJoinAngle(self, joint1, fulcrum, joint2):
         joint1Point = self.getPoint(joint1)
         joint2Point = self.getPoint(joint2)
-        fulcrumPoint = self.getPoint(fulcrumPoint)
-        return fulcrumPoint.getAngle(joint1Point, joint2Point)
-
+        fulcrumPoint = self.getPoint(fulcrum)
+        return fulcrumPoint.getJointAngle(joint1Point, joint2Point)
+    def getCoordinate(self, joint):
+        print(joint)
+        return self.all_keypoints[int(self.pose_entries[self.partIntMap[joint]]), 0:2]
     def getPoint(self, joint):
-        coordinate = self.all_keypoints[self.pose_entries[partIntMap[joint]], 0:2]
-        return new Point(coordinate)
+        return Point(self.getCoordinate(joint))
 
     def initPartsDict(self):
         self.partIntMap = {
-            'leftHip': 11,
-            'rightHip': 8,
-            'leftKnee': 12,
-            'rightKnee': 9,
-            'nose': 0,
-            'leftElbow': 6,
-            'rightElbow': 3,
-            'rightShoulder': 2,
-            'leftShoulder': 5,
-            'chestCenter': 1,
-            'leftEye': 15,
-            'rightEye': 14,
-            'rightWrist': 4,
-            'leftWrist': 7,
-            'rightAnkle': 10,
-            'leftAnkle': 13,
-            'leftEar': 16,
-            'rightEar': 17
+            101: 11,
+            201: 8,
+            102: 12,
+            202: 9,
+            3: 0,
+            104: 6,
+            204: 3,
+            205: 2,
+            105: 5,
+            6: 1,
+            107: 15,
+            207: 14,
+            208: 4,
+            108: 7,
+            209: 10,
+            109: 13,
+            110: 16,
+            210: 17
         }
-        self.LEFT = 100
-        self.RIGHT = 200
-        self.HIP = 1
-        self.KNEE = 2
-        self.NOSE = 3
-        self.ELBOW = 4
-        self.SHOULDER = 5
-        self.CENTER = 6
-        self.EYE = 7
-        self.WRIST = 8
-        self.ANKLE = 9
-        self.EAR = 10
 
     

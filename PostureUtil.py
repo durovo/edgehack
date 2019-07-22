@@ -1,6 +1,4 @@
-import sys    
 import numpy as np
-from demo import partIntMap
 
 '''
 Usage:

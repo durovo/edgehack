@@ -1,5 +1,5 @@
 from PostureUtil import Point
-
+import numpy as np
 
 LEFT = 100
 RIGHT = 200
@@ -16,21 +16,24 @@ EAR = 10
 
 class Human(object):
     def __init__(self):
-        self.initPartsDict();
+        self.initPartsDict()
     
     def updatePositions(self, pose_entries, all_keypoints):
         self.pose_entries = pose_entries
         self.all_keypoints = all_keypoints
 
-    def getJoinAngle(self, joint1, fulcrum, joint2):
-        joint1Point = self.getPoint(joint1)
-        joint2Point = self.getPoint(joint2)
-        fulcrumPoint = self.getPoint(fulcrum)
+    def getJointAngle(self, joint1, fulcrum, joint2, side=0):
+        joint1Point = self.getPoint(joint1,side)
+        joint2Point = self.getPoint(joint2,side)
+        fulcrumPoint = self.getPoint(fulcrum,side)
         return fulcrumPoint.getJointAngle(joint1Point, joint2Point)
+
     def getCoordinate(self, joint):
-        print(joint)
+        #print(joint)
         return self.all_keypoints[int(self.pose_entries[self.partIntMap[joint]]), 0:2]
-    def getPoint(self, joint):
+
+    def getPoint(self, joint, side=0):
+        joint = joint+side
         return Point(self.getCoordinate(joint))
 
     def initPartsDict(self):
@@ -55,4 +58,24 @@ class Human(object):
             210: 17
         }
 
+    def isFacingLeft(self, pose_entries, all_keypoints):
+        side = LEFT
+        part1 = HIP
+        part2 = SHOULDER
+        part3 = ELBOW
+        part1_global = self.pose_entries[self.partIntMap[side+part1]]
+        if part1_global == -1:
+            side = RIGHT
+            part1_global = self.pose_entries[self.partIntMap[side+part1]]
+        part1 = all_keypoints[int(part1_global), 0:2]
+        part2_global = self.pose_entries[self.partIntMap[side+part2]]
+        part2 = all_keypoints[int(part2_global), 0:2]
+        part3_global = self.pose_entries[self.partIntMap[side+part3]]
+        part3 = all_keypoints[int(part3_global), 0:2]
+
+        td = part2-part3
+        esDistance = np.sqrt(np.inner(td, td))
+        if part2[0] < part1[0]:
+            return True
+        return False
     

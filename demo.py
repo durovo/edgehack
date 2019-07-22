@@ -4,6 +4,7 @@ import numpy as np
 import torch
 import math
 import time
+import os 
 
 from models.with_mobilenet import PoseEstimationWithMobileNet
 from modules.keypoints import extract_keypoints, group_keypoints, BODY_PARTS_KPT_IDS, BODY_PARTS_PAF_IDS
@@ -127,6 +128,27 @@ def run_demo(net, image_provider, height_size, cpu):
         if key == 27:  # esc
             return
 
+def isFacingLeft(pose_entries, all_keypoints):
+    side = "left"
+    part1 = "Hip"
+    part2 = "Shoulder"
+    part3 = "Elbow"
+    part1_global = pose_entries[partIntMap[side+part1]]
+    if part1_global == -1:
+        side = "right"
+        part1_global = pose_entries[partIntMap[side+part1]]
+    part1 = all_keypoints[int(part1_global), 0:2]
+    part2_global = pose_entries[partIntMap[side+part2]]
+    part2 = all_keypoints[int(part2_global), 0:2]
+    part3_global = pose_entries[partIntMap[side+part3]]
+    part3 = all_keypoints[int(part3_global), 0:2]
+
+    td = part2-part3
+    esDistance = np.sqrt(np.inner(td, td))
+    if part2[0] < part1[0]:
+        return True
+    return False
+
 def printAngle(angle, x, y, img, font_color=(255, 255, 255)):
     if not math.isnan(angle):
         angle = int(angle)
@@ -221,10 +243,28 @@ def start_planks(source=0,vid=None):
     if vid is not None:
         frame_provider = VideoReader(vid)
     height_size = 256
-    cpu = False
+    cpu = True
     run_demo(net, frame_provider, height_size, cpu)
+
+def start_bicepCurl(source = None, vid = None):
+    print(source, vid)
+    if vid is not None:
+        frame_provider = VideoReader(vid)
+    elif source is not None:
+        vid = []
+        for filename in os.listdir(source):
+            vid.append(os.path.join(source, filename))
+        frame_provider = ImageReader(vid)
+    height_size = 256
+    cpu = True
+    from Trainer import Trainer
+    from BicepCurl import BicepCurl
+    trainer = Trainer(frame_provider,"bicepCurl",net)
+    trainer.start_training()
+
 if __name__ == '__main__':
 
-    vid = 'LegRaise.mp4'
-    start_planks(0, vid)
+    vid = 'test_videos/BicepCurl.mp4'
+    # start_planks(0, vid)
+    start_bicepCurl(0,vid)
     

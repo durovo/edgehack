@@ -1,4 +1,5 @@
 import numpy as np
+from Utils.HelperMethods import displayText
 
 class Exercise:
     def __init__(self, statesList, name = None):
@@ -7,7 +8,6 @@ class Exercise:
         self.nextState = statesList[0]
         self.name = name
         self.reps  = -1
-        self.continuousConstraintViolations = 0
         self.isExerciseReset = False
 
     def setHuman(self,human):
@@ -19,6 +19,7 @@ class Exercise:
     def transitionToNextState(self):
         self.currentState = self.nextState
         self.nextState = self.calculateNextState()
+        self.currentState.constraintViolations = 0
 
     def checkAndUpdateState(self):
         if self.nextState.isStateReached():
@@ -44,7 +45,11 @@ class Exercise:
             self.currentState.updatePosition(data)
             
             if self.currentState.areConstraintsMet():
-                self.continuousConstraintViolations = 0
                 self.checkAndUpdateState()
             else:
-                self.continuousConstraintViolations += 1
+                self.currentState.constraintViolations += 1
+
+    def displayText(self, frame):
+        if self.currentState is not None:
+            displayText("Reps: "+ str(self.reps),50,40,frame)
+            displayText(self.currentState.name,50,60,frame)

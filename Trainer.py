@@ -1,4 +1,4 @@
-from demo import infer_fast, extract_keypoints,group_keypoints,displayText
+from demo import infer_fast, extract_keypoints,group_keypoints
 from human import Human
 from BicepCurl import BicepCurl
 import cv2
@@ -39,7 +39,7 @@ class Trainer(object):
             self.excercise.setHuman(trainee)
             self.excercise.continueExercise()
 
-            if self.excercise.continuousConstraintViolations > 10:
+            if self.excercise.currentState and self.excercise.currentState.constraintViolations >= 5:
                 self.excercise.reset()
             
             training_output.append(self.markTrainee(trainee, frame,self.excercise))
@@ -69,10 +69,6 @@ class Trainer(object):
             if partCoord is not None:
                 cv2.circle(frame,(int(partCoord[0]),int(partCoord[1])),3,(0,255,0),-1)
         
-        if exercise.currentState is not None:
-            displayText("Distance: " + str(exercise.distanceFromGround),50,20,frame)
-            displayText("Error: " + str(exercise.continuousConstraintViolations),50,30,frame)
-            displayText("Reps: "+ str(exercise.reps),50,40,frame)
-            displayText(exercise.currentState.name,50,60,frame)
+        exercise.displayText(frame)
 
         return frame

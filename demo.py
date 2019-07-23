@@ -154,14 +154,6 @@ def printAngle(angle, x, y, img, font_color=(255, 255, 255)):
         angle = int(angle)
     displayText(angle, x, y, img, font_color)
 
-def displayText(text, x, y, img, font_color=(255, 255, 255)):
-    cv2.putText(img, str(text), 
-                (int(x), int(y)), 
-                font, 
-                fontScale,
-                font_color,
-                lineType)
-
 def checkDistance(pose_entries, all_keypoints, side, part1, part2):
     part1_global = pose_entries[partIntMap[side+part1]]
     part1 = all_keypoints[int(part1_global), 0:2]
@@ -258,7 +250,7 @@ def start_planks(source=0,vid=None):
 def start_bicepCurl(source = None, vid = None):
     print(source, vid)
     if vid is not None:
-        frame_provider = VideoReader(vid)
+        frame_provider = CameraReader(0)
     elif source is not None:
         vid = []
         for filename in os.listdir(source):
@@ -297,6 +289,6 @@ if __name__ == '__main__':
     elif exercise == "pushup":
         vid = 'data/pushup/pushup.mp4'
         start_pushup(0, vid)
-    elif exercise is None:
-        print ("Please specifiy exercise")
+    else:
+        print ("Please specifiy a valid exercise")
     

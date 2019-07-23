@@ -28,6 +28,12 @@ class Human(object):
         fulcrumPoint = self.getPoint(fulcrum,side)
         return fulcrumPoint.getJointAngle(joint1Point, joint2Point)
 
+    def getSlopeAngle(self, joint1, joint2, side = 0):
+        joint1Point = self.getPoint(joint1,side)
+        joint2Point = self.getPoint(joint2,side)
+
+        return joint1Point.getSlopeAngle(joint2Point)     
+
     def getBodyPartDistance(self,part1,part2, side=0):
         part1Point = self.getPoint(part1, side)
         part2Point =  self.getPoint(part2, side)

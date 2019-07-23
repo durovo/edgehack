@@ -1,8 +1,9 @@
 from Exercise import Exercise
 from State import State
-from Utils.Constants import Direction,BodyParts
+from Utils.Constants import BodyParts
 from Constraint import Constraint
 import numpy as np
+from Utils.HelperMethods import displayText
 
 class Pushup(Exercise):
     def __init__(self):
@@ -64,7 +65,7 @@ class Pushup(Exercise):
             return False
         
     def getInitialState(self):
-        state = State(Direction.Rest.value, self.constraints,0, self.isInitialStateReached, "Resting")
+        state = State(self.constraints,0, self.isInitialStateReached, "Resting")
 
         return state
     
@@ -81,11 +82,11 @@ class Pushup(Exercise):
             return False
 
     def getConcentricState(self):
-        state = State(Direction.Concentric.value, self.constraints,1, self.isConcentricStateReached, "Concentric")
+        state = State(self.constraints,1, self.isConcentricStateReached, "Concentric")
         return state
 
     def getActiveState(self):
-        state = State(Direction.Rest.value, self.constraints,2, self.isActiveStateReached, "Active")
+        state = State(self.constraints,2, self.isActiveStateReached, "Active")
         return state
     
     def isEccentricStateReached(self):
@@ -95,7 +96,7 @@ class Pushup(Exercise):
             return False
 
     def getEccentricState(self):
-        state = State(Direction.Eccentric.value, self.constraints,3, self.isEccentricStateReached, "Eccentric")
+        state = State(self.constraints,3, self.isEccentricStateReached, "Eccentric")
         return state
     
     def continueExercise(self):
@@ -107,3 +108,8 @@ class Pushup(Exercise):
             self.distanceFromGround = abs(wristCoord.coord[1] - shoulderCoord.coord[1])
         
         super().continueExercise(self.distanceFromGround)
+
+    def displayText(self, frame):
+        super().displayText(frame)
+        displayText("Distance: " + str(self.distanceFromGround),50,20,frame)
+        displayText("Error: " + str(self.continuousConstraintViolations),50,30,frame)

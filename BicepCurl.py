@@ -2,6 +2,7 @@ from Exercise import Exercise
 from State import State
 from Utils.Constants import Direction,BodyParts
 from Constraint import Constraint
+from Utils.HelperMethods import displayText
 
 class BicepCurl(Exercise):
     def __init__(self):
@@ -32,7 +33,7 @@ class BicepCurl(Exercise):
         return self.human.getJointAngle(BodyParts.HIP.value, BodyParts.SHOULDER.value, BodyParts.ELBOW.value, self.side)
 
     def getBackAngle(self):
-        return self.human.getJointAngle(BodyParts.KNEE.value, BodyParts.HIP.value, BodyParts.SHOULDER.value, self.side)
+        return self.human.getSlopeAngle(BodyParts.HIP.value, BodyParts.SHOULDER.value, self.side)
 
     def getCurlAngle(self):
         curlAngle = self.human.getJointAngle(BodyParts.SHOULDER.value, BodyParts.ELBOW.value, BodyParts.WRIST.value, self.side)
@@ -47,7 +48,7 @@ class BicepCurl(Exercise):
     def isCorrectBack(self,raiseError=None):
         if raiseError:
             print ("Straighten your back. Back angle", str(self.backAngle))
-        return self.backAngle > 160
+        return self.backAngle > 80
 
     def isInitialStateReached(self):
         #TODO: add other checks to see if he is standing
@@ -57,7 +58,7 @@ class BicepCurl(Exercise):
             return False
 
     def getInitialState(self):
-        state = State(Direction.Rest.value, self.constraints,0, self.isInitialStateReached, "Resting")
+        state = State(self.constraints,0, self.isInitialStateReached, "Resting")
 
         return state
     
@@ -74,11 +75,11 @@ class BicepCurl(Exercise):
             return False
 
     def getConcentricState(self):
-        state = State(Direction.Concentric.value, self.constraints,1, self.isConcentricStateReached, "Concentric")
+        state = State(self.constraints,1, self.isConcentricStateReached, "Concentric")
         return state
 
     def getActiveState(self):
-        state = State(Direction.Rest.value, self.constraints,2, self.isActiveStateReached, "Active")
+        state = State(self.constraints,2, self.isActiveStateReached, "Active")
         return state
     
     def isEccentricStateReached(self):
@@ -88,8 +89,13 @@ class BicepCurl(Exercise):
             return False
 
     def getEccentricState(self):
-        state = State(Direction.Eccentric.value, self.constraints,3, self.isEccentricStateReached, "Eccentric")
+        state = State(self.constraints,3, self.isEccentricStateReached, "Eccentric")
         return state
         
     def continueExercise(self):
         super().continueExercise(self.curlAngle)
+
+    def displayText(self, frame):
+        super().displayText(frame)
+        displayText("Curl angle: "+ str(round(self.curlAngle,2)),50,80,frame)
+        displayText("Back angle: "+ str(round(self.backAngle,2)),50,100,frame)

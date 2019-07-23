@@ -35,3 +35,10 @@ class Point:
 
         return np.degrees(angle)
     
+    def getSlopeAngle(self,otherPoint):
+        if self.isNullPoint() or otherPoint.isNullPoint():
+            return np.nan
+
+        slope = np.arctan(abs((otherPoint.coord[1] - self.coord[1])/(otherPoint.coord[0] - self.coord[0])))
+
+        return np.degrees(slope)  

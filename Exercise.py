@@ -20,10 +20,12 @@ class Exercise:
                 if self.currentState.order == 0:
                     self.reps += 1
         else:
-            self.currentState.updatePosition(data)
+            if data: 
+                self.currentState.updatePosition(data)
 
-            if self.currentState.areConstraintsMet():
-                if self.nextState.isStateReached():
-                    self.transitionToNextState()
-                    if self.currentState.order == 0:
-                        self.reps += 1
+                if self.currentState.areConstraintsMet():
+                    if self.nextState.isStateReached():
+                        self.transitionToNextState()
+                        if self.currentState.order == 0:
+                            self.reps += 1
+                            print ("rep done. reps: ",str(self.reps))

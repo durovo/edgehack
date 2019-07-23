@@ -9,8 +9,17 @@ class BicepCurl(Exercise):
         self.side = BodyParts.LEFT.value if human.isFacingLeft(human.pose_entries, human.all_keypoints) else BodyParts.RIGHT.value
         self.constraints = [Constraint(self.isCorrectElbow), Constraint(self.isCorrectBack)]
         self.elbowAngle = self.human.getJointAngle(BodyParts.HIP.value, BodyParts.SHOULDER.value, BodyParts.ELBOW.value, self.side)
+        self.curlAngle = self.getCurlAngle()
+        self.backAngle = self.getBackAngle()
         statesList = self.getStates()
         super(BicepCurl, self).__init__(statesList, "bicepCurl")
+
+    def setHuman(self, human):
+        self.human = human
+        self.elbowAngle = self.human.getJointAngle(BodyParts.HIP.value, BodyParts.SHOULDER.value, BodyParts.ELBOW.value, self.side)
+        self.curlAngle = self.getCurlAngle()
+        self.backAngle = self.getBackAngle()
+
 
     def getStates(self):
         restingState = self.getInitialState()
@@ -25,20 +34,25 @@ class BicepCurl(Exercise):
 
 
     def getBackAngle(self):
-        return self.human.getJointAngle(BodyParts.HIP.value, BodyParts.SHOULDER.value, BodyParts.ELBOW.value, self.side)
+        return self.human.getJointAngle(BodyParts.KNEE.value, BodyParts.HIP.value, BodyParts.SHOULDER.value, self.side)
 
     def getCurlAngle(self):
-        return self.human.getJointAngle(BodyParts.SHOULDER.value, BodyParts.ELBOW.value, BodyParts.WRIST.value, self.side)
+        curlAngle = self.human.getJointAngle(BodyParts.SHOULDER.value, BodyParts.ELBOW.value, BodyParts.WRIST.value, self.side)
+        return curlAngle
 
-    def isCorrectElbow(self):
-        return self.getElbowAngle() < 40
+    def isCorrectElbow(self,raiseError=None):
+        if raiseError:
+            print ("Bring your elbow closer to your body. Elbow angle", str(self.elbowAngle))
+        return self.elbowAngle < 40
     
-    def isCorrectBack(self):
-        return self.getBackAngle() > 160
+    def isCorrectBack(self,raiseError=None):
+        if raiseError:
+            print ("Straighten your back. Back angle", str(self.backAngle))
+        return self.backAngle > 160
 
     def isInitialStateReached(self):
         #TOD): add other checks to see if he is standing
-        if self.getCurlAngle() > 160:
+        if self.curlAngle > 160:
             return True
         else:
             return False
@@ -49,13 +63,13 @@ class BicepCurl(Exercise):
         return state
     
     def isConcentricStateReached(self):
-        if self.getCurlAngle() < 160:
+        if self.curlAngle < 160:
             return True
         else:
             return False
 
     def isActiveStateReached(self):
-        if self.getCurlAngle() < 30:
+        if self.curlAngle < 30:
             return True
         else:
             return False
@@ -69,7 +83,7 @@ class BicepCurl(Exercise):
         return state
     
     def isEccentricStateReached(self):
-        if self.getCurlAngle() > 30:
+        if self.curlAngle > 30:
             return True
         else:
             return False
@@ -79,4 +93,4 @@ class BicepCurl(Exercise):
         return state
         
     def continueExercise(self):
-        super().continueExercise(self.getCurlAngle())
+        super().continueExercise(self.curlAngle)

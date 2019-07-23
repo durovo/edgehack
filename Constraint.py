@@ -7,5 +7,4 @@ class Constraint:
         if self.checker():
             return True
         else:
-            self.checker().raiseError()
-            return False
+            return self.checker("raiseError")

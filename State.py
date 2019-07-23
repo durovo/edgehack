@@ -15,6 +15,8 @@ class State:
         self.currentPosition = data
 
     def isCorrectDirection(self):
-        return (self.currentPosition - self.previousPosition) * self.direction > 0
+        if self.previousPosition is None or self.currentPosition is None:
+            return True
+        return (self.currentPosition - self.previousPosition) * self.direction >= 0
 
 

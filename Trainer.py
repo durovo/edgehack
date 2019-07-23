@@ -12,6 +12,8 @@ class Trainer(object):
     def start_training(self,cpu):
         trainee = Human()
         training_output=[]
+        bicepCurl = None
+        cnt = 0
         for frame in self.frame_provider:
             net = self.net.eval()
             if not cpu:
@@ -32,12 +34,15 @@ class Trainer(object):
                 all_keypoints[kpt_id, 1] = (all_keypoints[kpt_id, 1] * stride / upsample_ratio - pad[0]) / scale
 
             trainee.updatePositions(pose_entries[0],all_keypoints)
-            training_output.append(self.markTrainee(trainee, frame))
-
+            temp_frame = frame
+            training_output.append(self.markTrainee(trainee, temp_frame))
             if self.excercise == "bicepCurl":
-                bicepCurl = BicepCurl(trainee)
+                if bicepCurl:
+                    bicepCurl.setHuman(trainee)
+                else:
+                    bicepCurl = BicepCurl(trainee)
                 bicepCurl.continueExercise()
-            
+
         self.saveTrainingVideo(training_output)
 
     def saveTrainingVideo(self,framesList):

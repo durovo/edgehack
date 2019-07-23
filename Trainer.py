@@ -1,5 +1,5 @@
 from demo import infer_fast, extract_keypoints,group_keypoints,displayText
-from human import Human
+from human import *
 from BicepCurl import BicepCurl
 import cv2
 
@@ -33,8 +33,8 @@ class Trainer(object):
                 all_keypoints[kpt_id, 1] = (all_keypoints[kpt_id, 1] * stride / upsample_ratio - pad[0]) / scale
 
             trainee.updatePositions(pose_entries[0],all_keypoints)
-            self.excercise.setHuman(trainee)
-            self.excercise.continueExercise()
+            # self.excercise.setHuman(trainee)
+            # self.excercise.continueExercise()
             
             training_output.append(self.markTrainee(trainee, frame,self.excercise))
             if not cpu:
@@ -61,12 +61,20 @@ class Trainer(object):
             partCoord = trainee.getCoordinate(part)
             if partCoord is not None:
                 cv2.circle(frame,(int(partCoord[0]),int(partCoord[1])),3,(0,255,0),-1)
-        
-        curlCoord = trainee.getCoordinate(exercise.side+4)
-        if curlCoord is not None:
-            displayText(str(exercise.curlAngle),curlCoord[0],curlCoord[1],frame)
-            displayText("Reps: "+ str(exercise.reps),50,50,frame)
-            displayText(exercise.currentState.name,50,100,frame)
+        kneeCoord = trainee.getCoordinate(LEFT + KNEE)
+        hipCoord = trainee.getCoordinate(LEFT+HIP)
+
+        if kneeCoord is not None:
+            wkaAngle = trainee.getJointAngle(HIP, KNEE, ANKLE, LEFT)
+            displayText(str(wkaAngle), kneeCoord[0], kneeCoord[1], frame)
+
+            hipAngle = trainee.getJointAngle(SHOULDER, HIP, KNEE, LEFT)
+            displayText(str(hipAngle), hipCoord[0], hipCoord[1], frame)
+        # curlCoord = trainee.getCoordinate(exercise.side+4)
+        # if curlCoord is not None:
+        #     displayText(str(exercise.curlAngle),curlCoord[0],curlCoord[1],frame)
+        #     displayText("Reps: "+ str(exercise.reps),50,50,frame)
+        #     displayText(exercise.currentState.name,50,100,frame)
 
         return frame
 

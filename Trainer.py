@@ -36,14 +36,14 @@ class Trainer(object):
             self.excercise.setHuman(trainee)
             self.excercise.continueExercise()
 
-            if self.excercise.continuousConstraintViolations > 50:
+            if self.excercise.continuousConstraintViolations > 10:
                 self.excercise.reset()
             
             training_output.append(self.markTrainee(trainee, frame,self.excercise))
             if not cpu:
                 cv2.imshow('Output',frame)
                 key = cv2.waitKey(33)
-                if key ==27:
+                if key == 27:
                     return
         
         self.saveTrainingVideo(training_output)

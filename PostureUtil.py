@@ -18,7 +18,13 @@ class Point:
     def distance(self, otherPoint):
         return np.square((self.coord[0]-otherPoint.coord[0])) + np.square((self.coord[1]-otherPoint[1]))
     
+    def isNullPoint(self):
+        return self.coord is None
+
     def getJointAngle(self,point1,point2):
+        if self.isNullPoint() or point1.isNullPoint() or point2.isNullPoint():
+            return np.nan
+            
         line1 = point1.coord - self.coord
         line2 = point2.coord - self.coord
 

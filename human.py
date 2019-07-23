@@ -30,7 +30,11 @@ class Human(object):
 
     def getCoordinate(self, joint):
         #print(joint)
-        return self.all_keypoints[int(self.pose_entries[self.partIntMap[joint]]), 0:2]
+        keyPointKey = int(self.pose_entries[self.partIntMap[joint]])
+        if keyPointKey >= 0:
+            return self.all_keypoints[keyPointKey, 0:2]
+        else:
+            return None
 
     def getPoint(self, joint, side=0):
         joint = joint+side

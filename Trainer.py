@@ -42,7 +42,6 @@ class Trainer(object):
                 else:
                     bicepCurl = BicepCurl(trainee)
                 bicepCurl.continueExercise()
-
         self.saveTrainingVideo(training_output)
 
     def saveTrainingVideo(self,framesList):
@@ -59,7 +58,8 @@ class Trainer(object):
     def markTrainee(self,trainee,frame):
         for part in trainee.partIntMap.keys():
             partCoord = trainee.getCoordinate(part)
-            cv2.circle(frame,(int(partCoord[0]),int(partCoord[1])),3,(0,255,0),-1)
+            if partCoord is not None:
+                cv2.circle(frame,(int(partCoord[0]),int(partCoord[1])),3,(0,255,0),-1)
 
         return frame
 

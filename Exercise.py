@@ -1,3 +1,5 @@
+import numpy as np
+
 class Exercise:
     def __init__(self, statesList, name = None):
         self.stateFlow = statesList
@@ -20,12 +22,13 @@ class Exercise:
                 if self.currentState.order == 0:
                     self.reps += 1
         else:
-            if data: 
+            if data is not np.nan: 
                 self.currentState.updatePosition(data)
 
                 if self.currentState.areConstraintsMet():
                     if self.nextState.isStateReached():
                         self.transitionToNextState()
+                        print ("State order: ",str(self.currentState.order))
                         if self.currentState.order == 0:
                             self.reps += 1
                             print ("rep done. reps: ",str(self.reps))

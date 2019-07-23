@@ -18,7 +18,7 @@ class Point:
     def distance(self, otherPoint):
         if self.isNullPoint() or otherPoint.isNullPoint():
             return np.nan
-        return np.square((self.coord[0]-otherPoint.coord[0])) + np.square((self.coord[1]-otherPoint[1]))
+        return np.square((self.coord[0]-otherPoint.coord[0])) + np.square((self.coord[1]-otherPoint.coord[1]))
     
     def isNullPoint(self):
         return self.coord is None

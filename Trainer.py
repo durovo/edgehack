@@ -1,4 +1,4 @@
-from demo import infer_fast, extract_keypoints,group_keypoints
+from demo import infer_fast, extract_keypoints,group_keypoints,displayText
 from human import Human
 from BicepCurl import BicepCurl
 import cv2
@@ -35,13 +35,15 @@ class Trainer(object):
 
             trainee.updatePositions(pose_entries[0],all_keypoints)
             temp_frame = frame
-            training_output.append(self.markTrainee(trainee, temp_frame))
             if self.excercise == "bicepCurl":
                 if bicepCurl:
                     bicepCurl.setHuman(trainee)
                 else:
                     bicepCurl = BicepCurl(trainee)
                 bicepCurl.continueExercise()
+            
+            training_output.append(self.markTrainee(trainee, temp_frame,bicepCurl))
+
         self.saveTrainingVideo(training_output)
 
     def saveTrainingVideo(self,framesList):
@@ -55,11 +57,15 @@ class Trainer(object):
         cv2.destroyAllWindows()
         video.release()
 
-    def markTrainee(self,trainee,frame):
+    def markTrainee(self,trainee,frame,BicepCurl):
         for part in trainee.partIntMap.keys():
             partCoord = trainee.getCoordinate(part)
             if partCoord is not None:
                 cv2.circle(frame,(int(partCoord[0]),int(partCoord[1])),3,(0,255,0),-1)
+        
+        curlCoord = trainee.getCoordinate(bicepCurl.side+4)
+        displayText(str(bicepCurl.curlAngle),curlCoord[0],curlCoord[1],frame)
+        displayText("Reps: "+ str(bicepCurl.reps),50,50,frame)
 
         return frame
 

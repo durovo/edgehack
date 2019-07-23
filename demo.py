@@ -94,7 +94,7 @@ def run_demo(net, image_provider, height_size, cpu):
             # if not checkDistance(pose_entries[n], all_keypoints, "left", "Elbow", "Knee"):
             #     continue
             current_human.updatePositions(pose_entries[n], all_keypoints)
-            angle = current_human.getJoinAngle(LEFT+ HIP, 
+            angle = current_human.getJointAngle(LEFT+ HIP, 
                                                 LEFT+ KNEE,
                                                 LEFT+ ANKLE)
             point = current_human.getCoordinate(LEFT+KNEE)
@@ -260,11 +260,10 @@ def start_bicepCurl(source = None, vid = None):
     from Trainer import Trainer
     from BicepCurl import BicepCurl
     trainer = Trainer(frame_provider,"bicepCurl",net)
-    trainer.start_training()
+    trainer.start_training(cpu)
 
 if __name__ == '__main__':
-
-    vid = 'test_videos/BicepCurl.mp4'
+    vid = 'data/bcurl/bicepCurl.mp4'
     # start_planks(0, vid)
     start_bicepCurl(0,vid)
     

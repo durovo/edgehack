@@ -74,7 +74,6 @@ class Human(object):
         part3 = all_keypoints[int(part3_global), 0:2]
 
         td = part2-part3
-        esDistance = np.sqrt(np.inner(td, td))
         if part2[0] < part1[0]:
             return True
         return False

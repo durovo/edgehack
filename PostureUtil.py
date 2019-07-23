@@ -16,7 +16,9 @@ class Point:
         self.coord = coordinates
     
     def distance(self, otherPoint):
-        return np.square((self.coord[0]-otherPoint.coord[0])) + np.square((self.coord[1]-otherPoint[1]))
+        if self.isNullPoint() or otherPoint.isNullPoint():
+            return np.nan
+        return np.square((self.coord[0]-otherPoint.coord[0])) + np.square((self.coord[1]-otherPoint.coord[1]))
     
     def isNullPoint(self):
         return self.coord is None
@@ -32,3 +34,4 @@ class Point:
         angle = np.arccos(cosine_angle)
 
         return np.degrees(angle)
+    

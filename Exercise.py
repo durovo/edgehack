@@ -10,6 +10,9 @@ class Exercise:
         self.continuousConstraintViolations = 0
         self.isExerciseReset = False
 
+    def setHuman(self,human):
+        pass
+
     def calculateNextState(self):
         return self.stateFlow[(self.currentState.order + 1) % len(self.stateFlow)]
 
@@ -30,6 +33,7 @@ class Exercise:
                 print ("rep done. reps: ",str(self.reps))
 
     def reset(self):
+        print ("Reseting rep")
         self.nextState = self.stateFlow[0]
         self.isExerciseReset = True
 

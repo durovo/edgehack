@@ -33,8 +33,8 @@ class Trainer(object):
                 all_keypoints[kpt_id, 1] = (all_keypoints[kpt_id, 1] * stride / upsample_ratio - pad[0]) / scale
 
             trainee.updatePositions(pose_entries[0],all_keypoints)
-            # self.excercise.setHuman(trainee)
-            # self.excercise.continueExercise()
+            self.excercise.setHuman(trainee)
+            self.excercise.continueExercise()
             
             training_output.append(self.markTrainee(trainee, frame,self.excercise))
             if not cpu:

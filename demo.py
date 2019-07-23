@@ -252,7 +252,7 @@ def start_planks(source=0,vid=None):
     cpu = True if processor == "cpu" else False
     run_demo(net, frame_provider, height_size, cpu)
 
-def start_bicepCurl(source = None, vid = None):
+def start_excercise(source, vid, excercise):
     print(source, vid)
     if vid is not None:
         frame_provider = VideoReader(vid)
@@ -265,13 +265,21 @@ def start_bicepCurl(source = None, vid = None):
     cpu = True if processor == "cpu" else False
     print(cpu)
     from Trainer import Trainer
+    trainer = Trainer(frame_provider,excercise,net)
+    trainer.start_training(cpu)
+
+def start_squats(source = None, vid = None):
+    from Squats import Squats
+    squats = Squats()
+    start_excercise(source, vid, squats)
+
+def start_bicepCurl(source = None, vid = None):
     from BicepCurl import BicepCurl
     bicepCurl = BicepCurl()
-    trainer = Trainer(frame_provider,bicepCurl,net)
-    trainer.start_training(cpu)
+    start_excercise(source, vid, bicepCurl)
 
 if __name__ == '__main__':
     vid = 'DhruvSquats.mp4'
     # start_planks(0, vid)
-    start_bicepCurl(0,vid)
+    start_squats(0,vid)
     

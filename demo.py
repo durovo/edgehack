@@ -15,19 +15,24 @@ from Checker import Checker
 from readers import ImageReader, CameraReader, VideoReader
 
 
-def infer_fast(net, img, net_input_height_size, stride, upsample_ratio, cpu,
+def infer_fast(net, img1, img2, net_input_height_size, stride, upsample_ratio, cpu,
                pad_value=(0, 0, 0), img_mean=(128, 128, 128), img_scale=1/256):
-    height, width, _ = img.shape
+    height, width, _ = img1.shape
     scale = net_input_height_size / height
 
-    scaled_img = cv2.resize(img, (0, 0), fx=scale, fy=scale, interpolation=cv2.INTER_CUBIC)
-    scaled_img = normalize(scaled_img, img_mean, img_scale)
-    min_dims = [net_input_height_size, max(scaled_img.shape[1], net_input_height_size)]
-    padded_img, pad = pad_width(scaled_img, stride, pad_value, min_dims)
+    scaled_img1 = cv2.resize(img1, (0, 0), fx=scale, fy=scale, interpolation=cv2.INTER_CUBIC)
+    scaled_img2 = cv2.resize(img2, (0, 0), fx=scale, fy=scale, interpolation=cv2.INTER_CUBIC)
+    scaled_img1 = normalize(scaled_img1, img_mean, img_scale)
+    scaled_img2 = normalize(scaled_img2, img_mean, img_scale)
+    min_dims = [net_input_height_size, max(scaled_img1.shape[1], net_input_height_size)]
+    padded_img1, pad = pad_width(scaled_img1, stride, pad_value, min_dims)
+    padded_img2, pad = pad_width(scaled_img2, stride, pad_value, min_dims)
 
-    tensor_img = torch.from_numpy(padded_img).permute(2, 0, 1).unsqueeze(0).float()
+    tensor_img1 = torch.from_numpy(padded_img1).permute(2, 0, 1).unsqueeze(0).float()
+    tensor_img2 = torch.from_numpy(padded_img2).permute(2, 0, 1).unsqueeze(0).float()    
     if not cpu:
-        tensor_img = tensor_img.cuda()
+        tensor_img1 = tensor_img1.cuda()
+        tensor_img2 = tensor_img2.cuda()
 
     stages_output = net(tensor_img)
 

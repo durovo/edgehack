@@ -32,6 +32,9 @@ class Trainer(object):
                 all_keypoints[kpt_id, 0] = (all_keypoints[kpt_id, 0] * stride / upsample_ratio - pad[1]) / scale
                 all_keypoints[kpt_id, 1] = (all_keypoints[kpt_id, 1] * stride / upsample_ratio - pad[0]) / scale
 
+            if len(pose_entries) == 0:
+                continue
+                
             trainee.updatePositions(pose_entries[0],all_keypoints)
             self.excercise.setHuman(trainee)
             self.excercise.continueExercise()

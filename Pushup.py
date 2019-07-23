@@ -12,8 +12,8 @@ class Pushup(Exercise):
         self.RESTHANDANGLE = 160
         self.RESTBACKANGLE = 160
         self.CONCENTRICANGLE = 140
-        self.ACTIVEHANDANGLE = 55
-        self.ECCENTRICHANDANGLE = 65
+        self.ACTIVEHANDANGLE = 65
+        self.ECCENTRICHANDANGLE = 75
 
     def setHuman(self, human):
         self.human = human

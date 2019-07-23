@@ -34,7 +34,6 @@ class Trainer(object):
                 all_keypoints[kpt_id, 1] = (all_keypoints[kpt_id, 1] * stride / upsample_ratio - pad[0]) / scale
 
             trainee.updatePositions(pose_entries[0],all_keypoints)
-            temp_frame = frame
             if self.excercise == "bicepCurl":
                 if bicepCurl:
                     bicepCurl.setHuman(trainee)
@@ -42,8 +41,13 @@ class Trainer(object):
                     bicepCurl = BicepCurl(trainee)
                 bicepCurl.continueExercise()
             
-            training_output.append(self.markTrainee(trainee, temp_frame,bicepCurl))
-
+            training_output.append(self.markTrainee(trainee, frame,bicepCurl))
+            if not cpu:
+                cv2.imshow('Output',frame)
+                key = cv2.waitKey(33)
+                if key ==27:
+                    return
+        
         self.saveTrainingVideo(training_output)
 
     def saveTrainingVideo(self,framesList):
@@ -57,7 +61,7 @@ class Trainer(object):
         cv2.destroyAllWindows()
         video.release()
 
-    def markTrainee(self,trainee,frame,BicepCurl):
+    def markTrainee(self,trainee,frame,bicepCurl):
         for part in trainee.partIntMap.keys():
             partCoord = trainee.getCoordinate(part)
             if partCoord is not None:

@@ -232,8 +232,14 @@ def drawLinesTriplets(pose_entries, all_keypoints, img, color, side, part1L, par
 
 
 
+import sys
+if len(sys.argv) > 1:
+    processor = sys.argv[1]
+else:
+    processor = "cpu"
+
 net = PoseEstimationWithMobileNet()
-checkpoint = torch.load('.\checkpoints\checkpoint_iter_370000.pth', map_location='cpu')
+checkpoint = torch.load('.\checkpoints\checkpoint_iter_370000.pth', map_location=processor)
 load_state(net, checkpoint)
 
 
@@ -243,7 +249,7 @@ def start_planks(source=0,vid=None):
     if vid is not None:
         frame_provider = VideoReader(vid)
     height_size = 256
-    cpu = True
+    cpu = True if processor == "cpu" else False
     run_demo(net, frame_provider, height_size, cpu)
 
 def start_bicepCurl(source = None, vid = None):
@@ -256,7 +262,7 @@ def start_bicepCurl(source = None, vid = None):
             vid.append(os.path.join(source, filename))
         frame_provider = ImageReader(vid)
     height_size = 256
-    cpu = True
+    cpu = True if processor == "cpu" else False
     from Trainer import Trainer
     from BicepCurl import BicepCurl
     trainer = Trainer(frame_provider,"bicepCurl",net)

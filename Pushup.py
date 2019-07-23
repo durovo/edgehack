@@ -6,7 +6,7 @@ import numpy as np
 
 class Pushup(Exercise):
     def __init__(self):
-        self.constraints = [Constraint(self.isCorrectElbow), Constraint(self.isCorrectBack)]
+        self.constraints = [Constraint(self.isCorrectBack)]
         statesList = self.getStates()
         super(Pushup, self).__init__(statesList, "pushup")
         self.RESTHANDANGLE = 160

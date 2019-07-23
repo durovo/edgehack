@@ -2,6 +2,7 @@ from Exercise import Exercise
 from State import State
 from Utils.Constants import Direction,BodyParts
 from Constraint import Constraint
+import math
 
 class Squats(Exercise):
     def __init__(self):
@@ -13,7 +14,7 @@ class Squats(Exercise):
         self.active_constraints = [back_constraint, lowerleg_constraint, thigh_constraint]
         statesList = self.getStates()
         super(Squats, self).__init__(statesList, "Squats")
-        self.RESTANGLE_KNEE = 170
+        self.RESTANGLE_KNEE = 150
         self.RESTANGLE_HIP = 170
         self.CONCENTRICANGLE_KNEE = 120
         self.ACTIVEANGLE_KNEE = 100
@@ -45,23 +46,26 @@ class Squats(Exercise):
         return self.human.getJointAngle(BodyParts.SHOULDER.value, BodyParts.HIP.value, BodyParts.KNEE.value, self.side)
 
     def isCorrectThigh(self,raiseError=None):
+        # return True
         if raiseError:
-            print ("Keep your thighs parallel to the ground.")
-        kneeCoord = self.human.getCoordinate(BodyParts.KNEE + self.side)
-        hipCoord = self.human.getCoordinate(BodyParts.HIP + self.side)
-        return math.abs(kneeCoord[1]-hipCoord[1]) < 10
+            print ("Keep your thighs parallel to the ground.", self.kneeCoord[1], self.hipCoord[1])
+        self.kneeCoord = self.human.getCoordinate(BodyParts.KNEE.value + self.side)
+        self.hipCoord = self.human.getCoordinate(BodyParts.HIP.value + self.side)
+        return abs(self.kneeCoord[1]-self.hipCoord[1]) < 40
     
     def isCorrectBack(self,raiseError=None):
+        return True
         if raiseError:
             print ("Straighten your back.", str(self.backAngle))
-        return math.abs(self.backAngle - self.kneeAngle) > 20
+        return abs(self.backAngle - self.kneeAngle) > 20
 
     def isLowerLegStraight(self, raiseError=None):
+        return True
         if raiseError:
             print ("Align your knees to your feet.")
-        kneeCoord = self.human.getCoordinate(BodyParts.KNEE + self.side)
-        ankleCoord = self.human.getCoordinate(BodyParts.ANKLE + self.side)
-        return math.abs(kneeCoord[0]-ankleCoord[0]) < 10
+        kneeCoord = self.human.getCoordinate(BodyParts.KNEE.value + self.side)
+        ankleCoord = self.human.getCoordinate(BodyParts.ANKLE.value + self.side)
+        return abs(kneeCoord[0]-ankleCoord[0]) < 10
 
     def isInitialStateReached(self):
         #TOD): add other checks to see if he is standing
@@ -75,7 +79,7 @@ class Squats(Exercise):
 
         return state
     
-    def isConcentricStateReached(self):
+    def isConcentricStateReached(self): 
         if self.kneeAngle < self.RESTANGLE_KNEE:
             return True
         else:
@@ -96,6 +100,7 @@ class Squats(Exercise):
         return state
     
     def isEccentricStateReached(self):
+        print("The knee angle is ", self.kneeAngle)
         if self.kneeAngle > self.ACTIVEANGLE_KNEE:
             return True
         else:

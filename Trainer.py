@@ -63,7 +63,11 @@ class Trainer(object):
                 cv2.circle(frame,(int(partCoord[0]),int(partCoord[1])),3,(0,255,0),-1)
         kneeCoord = trainee.getCoordinate(LEFT + KNEE)
         hipCoord = trainee.getCoordinate(LEFT+HIP)
-
+        if exercise.currentState is not None:
+                # displayText("Distance: " + str(exercise.distanceFromGround),50,20,frame)
+                # displayText("Error: " + str(exercise.continuousConstraintViolations),50,30,frame)
+                displayText("Reps: "+ str(exercise.reps),50,40,frame)
+                displayText(exercise.currentState.name,50,60,frame)
         if kneeCoord is not None:
             wkaAngle = trainee.getJointAngle(HIP, KNEE, ANKLE, LEFT)
             displayText(str(wkaAngle), kneeCoord[0], kneeCoord[1], frame)

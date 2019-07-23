@@ -15,6 +15,7 @@ class Exercise:
         self.currentState = self.nextState
         self.nextState = self.calculateNextState()
 
+    
     def continueExercise(self, data):
         if self.currentState is None:
             if self.nextState.isStateReached():

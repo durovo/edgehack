@@ -33,7 +33,6 @@ class Pushup(Exercise):
 
     def getHandAngle(self):
         handAngle = self.human.getJointAngle(BodyParts.SHOULDER.value, BodyParts.ELBOW.value, BodyParts.WRIST.value, self.side)
-        print("Hand angle", str(handAngle))
         return handAngle
 
     def getBackAngle(self):

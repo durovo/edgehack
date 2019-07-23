@@ -33,6 +33,7 @@ class Exercise:
                 print ("rep done. reps: ",str(self.reps))
 
     def reset(self):
+        print ("Reseting rep")
         self.nextState = self.stateFlow[0]
         self.isExerciseReset = True
 

@@ -68,21 +68,8 @@ class Trainer(object):
         
         if exercise.currentState is not None:
             displayText("Distance: " + str(exercise.distanceFromGround),50,20,frame)
-            displayText("Distance: " + str(exercise.elbowDistanceFromHead),50,30,frame)
+            displayText("Error: " + str(exercise.continuousConstraintViolations),50,30,frame)
             displayText("Reps: "+ str(exercise.reps),50,40,frame)
             displayText(exercise.currentState.name,50,60,frame)
 
         return frame
-
-    def check_state_forms(self):
-        if self.excercise.state.is_motion_state:
-                for form in self.excercise.state.forms:
-                    is_form_correct = form.check()
-                    if not is_form_correct:
-                        self.mouth.speak(form.message)
-
-    def check_state_direction(self):
-        if self.excercise.state.is_motion_state:
-            is_direction_correct = self.excercise.state.direction.check_direction()
-            if not is_direction_correct:
-                self.mouth.speak(self.excercise.state.direction.message)

@@ -12,6 +12,7 @@ class Trainer(object):
     def start_training(self,cpu):
         trainee = Human()
         training_output=[]
+        cnt = 0
         for frame in self.frame_provider:
             net = self.net.eval()
             if not cpu:
@@ -37,12 +38,16 @@ class Trainer(object):
             if self.excercise == "bicepCurl":
                 bicepCurl = BicepCurl(trainee)
                 bicepCurl.continueExercise()
+            if cnt == 5:
+                break
+            cnt+=1
             
         self.saveTrainingVideo(training_output)
 
     def saveTrainingVideo(self,framesList):
         height,width,layers=framesList[1].shape
-        video=cv2.VideoWriter('training_output.avi',-1,1,(width,height))
+        fourcc = cv2.VideoWriter_fourcc(*'XVID')
+        video=cv2.VideoWriter('training_output.avi',fourcc,20.0,(width,height))
 
         for frame in framesList:
             video.write(frame)
@@ -54,7 +59,7 @@ class Trainer(object):
         for part in trainee.partIntMap.keys():
             partCoord = trainee.getCoordinate(part)
             cv2.circle(frame,(int(partCoord[0]),int(partCoord[1])),3,(0,255,0),-1)
-            
+
         return frame
 
     def check_state_forms(self):

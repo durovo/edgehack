@@ -22,17 +22,25 @@ class Trainer(object):
             upsample_ratio = 4
             height_size = 256
             total_keypoints_num = 0
-
-            heatmaps, pafs, scale, pad = infer_fast(net, frame, height_size, stride, upsample_ratio, cpu)
+            total_keypoints_num2 = 0
+            frame2 = frame.copy()
+            heatmaps, pafs, scale, pad, heatmaps2, pafs2, scale2, pad2 = infer_fast(net, frame, frame2, height_size, stride, upsample_ratio, cpu)
             all_keypoints_by_type = []
+            all_keypoints_by_type2 = []
             for kpt_idx in range(18):  # 19th for bg
                 total_keypoints_num += extract_keypoints(heatmaps[:, :, kpt_idx], all_keypoints_by_type, total_keypoints_num)
+                total_keypoints_num2 += extract_keypoints(heatmaps2[:, :, kpt_idx], all_keypoints_by_type2, total_keypoints_num2)
+
             pose_entries, all_keypoints = group_keypoints(all_keypoints_by_type, pafs, demo=True)
+            pose_entries2, all_keypoints2 = group_keypoints(all_keypoints_by_type2, pafs2, demo=True)
             for kpt_id in range(all_keypoints.shape[0]):
                 all_keypoints[kpt_id, 0] = (all_keypoints[kpt_id, 0] * stride / upsample_ratio - pad[1]) / scale
                 all_keypoints[kpt_id, 1] = (all_keypoints[kpt_id, 1] * stride / upsample_ratio - pad[0]) / scale
-
-            trainee.updatePositions(pose_entries[0],all_keypoints)
+            for kpt_id in range(all_keypoints2.shape[0]):
+                all_keypoints2[kpt_id, 0] = (all_keypoints2[kpt_id, 0] * stride / upsample_ratio - pad[1]) / scale
+                all_keypoints2[kpt_id, 1] = (all_keypoints2[kpt_id, 1] * stride / upsample_ratio - pad[0]) / scale
+            trainee.side.updatePositions(pose_entries[0],all_keypoints)
+            trainee.front.updatePositions(pose_entries2[0], all_keypoints2)
             self.excercise.setHuman(trainee)
             self.excercise.continueExercise()
             

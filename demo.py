@@ -26,25 +26,29 @@ def infer_fast(net, img1, img2, net_input_height_size, stride, upsample_ratio, c
     scaled_img2 = normalize(scaled_img2, img_mean, img_scale)
     min_dims = [net_input_height_size, max(scaled_img1.shape[1], net_input_height_size)]
     padded_img1, pad = pad_width(scaled_img1, stride, pad_value, min_dims)
-    padded_img2, pad = pad_width(scaled_img2, stride, pad_value, min_dims)
+    padded_img2, pad2 = pad_width(scaled_img2, stride, pad_value, min_dims)
 
-    tensor_img1 = torch.from_numpy(padded_img1).permute(2, 0, 1).unsqueeze(0).float()
-    tensor_img2 = torch.from_numpy(padded_img2).permute(2, 0, 1).unsqueeze(0).float()    
+    tensor_img1 = torch.from_numpy(padded_img1).permute(2, 0, 1).float()
+    tensor_img2 = torch.from_numpy(padded_img2).permute(2, 0, 1).float()    
     if not cpu:
         tensor_img1 = tensor_img1.cuda()
         tensor_img2 = tensor_img2.cuda()
-
+    tensor_img = torch.stack((tensor_img1, tensor_img2))
     stages_output = net(tensor_img)
 
     stage2_heatmaps = stages_output[-2]
-    heatmaps = np.transpose(stage2_heatmaps.squeeze().cpu().data.numpy(), (1, 2, 0))
+    heatmaps = np.transpose(stage2_heatmaps[0].cpu().data.numpy(), (1, 2, 0))
     heatmaps = cv2.resize(heatmaps, (0, 0), fx=upsample_ratio, fy=upsample_ratio, interpolation=cv2.INTER_CUBIC)
+    heatmaps2 = np.transpose(stage2_heatmaps[1].cpu().data.numpy(), (1, 2, 0))
+    heatmaps2 = cv2.resize(heatmaps, (0, 0), fx=upsample_ratio, fy=upsample_ratio, interpolation=cv2.INTER_CUBIC)
 
     stage2_pafs = stages_output[-1]
-    pafs = np.transpose(stage2_pafs.squeeze().cpu().data.numpy(), (1, 2, 0))
+    pafs = np.transpose(stage2_pafs[0].cpu().data.numpy(), (1, 2, 0))
     pafs = cv2.resize(pafs, (0, 0), fx=upsample_ratio, fy=upsample_ratio, interpolation=cv2.INTER_CUBIC)
+    pafs2 = np.transpose(stage2_pafs[1].cpu().data.numpy(), (1, 2, 0))
+    pafs2 = cv2.resize(pafs, (0, 0), fx=upsample_ratio, fy=upsample_ratio, interpolation=cv2.INTER_CUBIC)
 
-    return heatmaps, pafs, scale, pad
+    return heatmaps, pafs, scale, pad, heatmaps2, pafs2, scale, pad2
 
 font                   = cv2.FONT_HERSHEY_SIMPLEX
 bottomLeftCornerOfText = (10,500)

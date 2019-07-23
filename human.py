@@ -16,6 +16,12 @@ EAR = 10
 
 class Human(object):
     def __init__(self):
+        self.side = Skeleton()
+        self.front = Skeleton()
+    
+
+class Skeleton(object):
+    def __init__(self):
         self.initPartsDict()
     
     def updatePositions(self, pose_entries, all_keypoints):
@@ -81,4 +87,3 @@ class Human(object):
         if part2[0] < part1[0]:
             return True
         return False
-    

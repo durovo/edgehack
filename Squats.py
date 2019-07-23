@@ -22,7 +22,7 @@ class Squats(Exercise):
 
     def setHuman(self, human):
         self.human = human
-        self.side = BodyParts.LEFT.value if human.isFacingLeft(human.pose_entries, human.all_keypoints) else BodyParts.RIGHT.value
+        self.side = BodyParts.LEFT.value if human.side.isFacingLeft(human.side.pose_entries, human.side.all_keypoints) else BodyParts.RIGHT.value
         self.kneeAngle = self.getKneeAngle()
         self.backAngle = self.getBackAngle()
         self.hipAngle = self.getHipAngle()
@@ -36,21 +36,21 @@ class Squats(Exercise):
         return [restingState, concentricState, activeState, eccentricState]
 
     def getKneeAngle(self):
-        return self.human.getJointAngle(BodyParts.HIP.value, BodyParts.KNEE.value, BodyParts.ANKLE.value, self.side)
+        return self.human.side.getJointAngle(BodyParts.HIP.value, BodyParts.KNEE.value, BodyParts.ANKLE.value, self.side)
 
 
     def getBackAngle(self):
-        return self.human.getJointAngle(BodyParts.KNEE.value, BodyParts.HIP.value, BodyParts.SHOULDER.value, self.side)
+        return self.human.side.getJointAngle(BodyParts.KNEE.value, BodyParts.HIP.value, BodyParts.SHOULDER.value, self.side)
 
     def getHipAngle(self):
-        return self.human.getJointAngle(BodyParts.SHOULDER.value, BodyParts.HIP.value, BodyParts.KNEE.value, self.side)
+        return self.human.side.getJointAngle(BodyParts.SHOULDER.value, BodyParts.HIP.value, BodyParts.KNEE.value, self.side)
 
     def isCorrectThigh(self,raiseError=None):
         # return True
         if raiseError:
             print ("Keep your thighs parallel to the ground.", self.kneeCoord[1], self.hipCoord[1])
-        self.kneeCoord = self.human.getCoordinate(BodyParts.KNEE.value + self.side)
-        self.hipCoord = self.human.getCoordinate(BodyParts.HIP.value + self.side)
+        self.kneeCoord = self.human.side.getCoordinate(BodyParts.KNEE.value + self.side)
+        self.hipCoord = self.human.side.getCoordinate(BodyParts.HIP.value + self.side)
         return abs(self.kneeCoord[1]-self.hipCoord[1]) < 40
     
     def isCorrectBack(self,raiseError=None):
@@ -63,8 +63,8 @@ class Squats(Exercise):
         return True
         if raiseError:
             print ("Align your knees to your feet.")
-        kneeCoord = self.human.getCoordinate(BodyParts.KNEE.value + self.side)
-        ankleCoord = self.human.getCoordinate(BodyParts.ANKLE.value + self.side)
+        kneeCoord = self.human.side.getCoordinate(BodyParts.KNEE.value + self.side)
+        ankleCoord = self.human.side.getCoordinate(BodyParts.ANKLE.value + self.side)
         return abs(kneeCoord[0]-ankleCoord[0]) < 10
 
     def isInitialStateReached(self):

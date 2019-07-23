@@ -7,6 +7,8 @@ class Exercise:
         self.nextState = statesList[0]
         self.name = name
         self.reps  = -1
+        self.continuousConstraintViolations = 0
+        self.isExerciseReset = False
 
     def setHuman(self,human):
         pass
@@ -18,20 +20,30 @@ class Exercise:
         self.currentState = self.nextState
         self.nextState = self.calculateNextState()
 
+    def checkAndUpdateState(self):
+        if self.nextState.isStateReached():
+            self.transitionToNextState()
+            print ("State order: ",str(self.currentState.order))
+            if self.currentState.order == 0:
+                if self.isExerciseReset:
+                    self.isExerciseReset = False
+                else:
+                    self.reps += 1
+                
+                print ("rep done. reps: ",str(self.reps))
+
+    def reset(self):
+        self.nextState = self.stateFlow[0]
+        self.isExerciseReset = True
+
     def continueExercise(self, data):
         if self.currentState is None:
-            if self.nextState.isStateReached():
-                self.transitionToNextState()
-                if self.currentState.order == 0:
-                    self.reps += 1
-        else:
-            if data is not np.nan: 
-                self.currentState.updatePosition(data)
-
-                if self.currentState.areConstraintsMet():
-                    if self.nextState.isStateReached():
-                        self.transitionToNextState()
-                        print ("State order: ",str(self.currentState.order))
-                        if self.currentState.order == 0:
-                            self.reps += 1
-                            print ("rep done. reps: ",str(self.reps))
+            self.checkAndUpdateState()
+        elif data is not np.nan:
+            self.currentState.updatePosition(data)
+            
+            if self.currentState.areConstraintsMet():
+                self.continuousConstraintViolations = 0
+                self.checkAndUpdateState()
+            else:
+                self.continuousConstraintViolations += 1

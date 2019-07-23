@@ -35,13 +35,16 @@ class Trainer(object):
             trainee.updatePositions(pose_entries[0],all_keypoints)
             self.excercise.setHuman(trainee)
             self.excercise.continueExercise()
+
+            if self.excercise.continuousConstraintViolations > 10:
+                self.excercise.reset()
             
             training_output.append(self.markTrainee(trainee, frame,self.excercise))
             #cv2.imwrite('testImg.png',frame)
             if not cpu:
                 cv2.imshow('Output',frame)
                 key = cv2.waitKey(33)
-                if key ==27:
+                if key == 27:
                     return
         
         self.saveTrainingVideo(training_output)

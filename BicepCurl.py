@@ -4,24 +4,21 @@ from Utils.Constants import Direction,BodyParts
 from Constraint import Constraint
 
 class BicepCurl(Exercise):
-    def __init__(self, human):
-        self.human = human
-        self.side = BodyParts.LEFT.value if human.isFacingLeft(human.pose_entries, human.all_keypoints) else BodyParts.RIGHT.value
+    def __init__(self):
         self.constraints = [Constraint(self.isCorrectElbow), Constraint(self.isCorrectBack)]
-        self.elbowAngle = self.human.getJointAngle(BodyParts.HIP.value, BodyParts.SHOULDER.value, BodyParts.ELBOW.value, self.side)
-        self.curlAngle = self.getCurlAngle()
-        self.backAngle = self.getBackAngle()
         statesList = self.getStates()
         super(BicepCurl, self).__init__(statesList, "bicepCurl")
         self.RESTANGLE = 150
+        self.CONCENTRICANGLE = 140
         self.ACTIVEANGLE = 55
+        self.ECCENTRICANGLE = 65
 
     def setHuman(self, human):
         self.human = human
+        self.side = BodyParts.LEFT.value if human.isFacingLeft(human.pose_entries, human.all_keypoints) else BodyParts.RIGHT.value
         self.elbowAngle = self.human.getJointAngle(BodyParts.HIP.value, BodyParts.SHOULDER.value, BodyParts.ELBOW.value, self.side)
         self.curlAngle = self.getCurlAngle()
         self.backAngle = self.getBackAngle()
-
 
     def getStates(self):
         restingState = self.getInitialState()
@@ -61,12 +58,12 @@ class BicepCurl(Exercise):
             return False
 
     def getInitialState(self):
-        state = State(Direction.Rest.value, self.constraints,0, self.isInitialStateReached)
+        state = State(Direction.Rest.value, self.constraints,0, self.isInitialStateReached, "Resting")
 
         return state
     
     def isConcentricStateReached(self):
-        if self.curlAngle < self.RESTANGLE:
+        if self.curlAngle < self.CONCENTRICANGLE:
             return True
         else:
             return False
@@ -78,21 +75,21 @@ class BicepCurl(Exercise):
             return False
 
     def getConcentricState(self):
-        state = State(Direction.Concentric.value, self.constraints,1, self.isConcentricStateReached)
+        state = State(Direction.Concentric.value, self.constraints,1, self.isConcentricStateReached, "Concentric")
         return state
 
     def getActiveState(self):
-        state = State(Direction.Rest.value, self.constraints,2, self.isActiveStateReached)
+        state = State(Direction.Rest.value, self.constraints,2, self.isActiveStateReached, "Active")
         return state
     
     def isEccentricStateReached(self):
-        if self.curlAngle > self.ACTIVEANGLE:
+        if self.curlAngle > self.ECCENTRICANGLE:
             return True
         else:
             return False
 
     def getEccentricState(self):
-        state = State(Direction.Eccentric.value, self.constraints,3, self.isEccentricStateReached)
+        state = State(Direction.Eccentric.value, self.constraints,3, self.isEccentricStateReached, "Eccentric")
         return state
         
     def continueExercise(self):

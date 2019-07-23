@@ -1,11 +1,12 @@
 class State:
-    def __init__(self, direction, constraints, order,isStateReached):
+    def __init__(self, direction, constraints, order, isStateReached, name):
         self.constraints = constraints
         self.currentPosition = None
         self.previousPosition = None
         self.direction = direction
         self.order = order 
         self.isStateReached = isStateReached
+        self.name = name
     
     def areConstraintsMet(self):
         return all(constraint.evaluate() for constraint in self.constraints) and self.isCorrectDirection()

@@ -1,5 +1,6 @@
 from enum import Enum
 
+# Represents whether the position is supposed to be increasing or decreasing in the current state of the exercise
 class Direction(Enum):
     Concentric = -1
     Eccentric = 1

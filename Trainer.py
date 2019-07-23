@@ -12,7 +12,6 @@ class Trainer(object):
     def start_training(self,cpu):
         trainee = Human()
         training_output=[]
-        bicepCurl = None
         cnt = 0
         for frame in self.frame_provider:
             net = self.net.eval()
@@ -34,14 +33,10 @@ class Trainer(object):
                 all_keypoints[kpt_id, 1] = (all_keypoints[kpt_id, 1] * stride / upsample_ratio - pad[0]) / scale
 
             trainee.updatePositions(pose_entries[0],all_keypoints)
-            if self.excercise == "bicepCurl":
-                if bicepCurl:
-                    bicepCurl.setHuman(trainee)
-                else:
-                    bicepCurl = BicepCurl(trainee)
-                bicepCurl.continueExercise()
+            self.excercise.setHuman(trainee)
+            self.excercise.continueExercise()
             
-            training_output.append(self.markTrainee(trainee, frame,bicepCurl))
+            training_output.append(self.markTrainee(trainee, frame,self.excercise))
             if not cpu:
                 cv2.imshow('Output',frame)
                 key = cv2.waitKey(33)
@@ -61,15 +56,17 @@ class Trainer(object):
         cv2.destroyAllWindows()
         video.release()
 
-    def markTrainee(self,trainee,frame,bicepCurl):
+    def markTrainee(self,trainee,frame,exercise):
         for part in trainee.partIntMap.keys():
             partCoord = trainee.getCoordinate(part)
             if partCoord is not None:
                 cv2.circle(frame,(int(partCoord[0]),int(partCoord[1])),3,(0,255,0),-1)
         
-        curlCoord = trainee.getCoordinate(bicepCurl.side+4)
-        displayText(str(bicepCurl.curlAngle),curlCoord[0],curlCoord[1],frame)
-        displayText("Reps: "+ str(bicepCurl.reps),50,50,frame)
+        curlCoord = trainee.getCoordinate(exercise.side+4)
+        if curlCoord is not None:
+            displayText(str(exercise.curlAngle),curlCoord[0],curlCoord[1],frame)
+            displayText("Reps: "+ str(exercise.reps),50,50,frame)
+            displayText(exercise.currentState.name,50,100,frame)
 
         return frame
 

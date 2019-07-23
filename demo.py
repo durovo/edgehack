@@ -265,7 +265,8 @@ def start_bicepCurl(source = None, vid = None):
     cpu = True if processor == "cpu" else False
     from Trainer import Trainer
     from BicepCurl import BicepCurl
-    trainer = Trainer(frame_provider,"bicepCurl",net)
+    bicepCurl = BicepCurl()
+    trainer = Trainer(frame_provider,bicepCurl,net)
     trainer.start_training(cpu)
 
 if __name__ == '__main__':

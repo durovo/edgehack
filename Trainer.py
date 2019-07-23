@@ -12,7 +12,6 @@ class Trainer(object):
     def start_training(self,cpu):
         trainee = Human()
         training_output=[]
-        cnt = 0
         for frame in self.frame_provider:
             net = self.net.eval()
             if not cpu:
@@ -38,8 +37,7 @@ class Trainer(object):
             if self.excercise == "bicepCurl":
                 bicepCurl = BicepCurl(trainee)
                 bicepCurl.continueExercise()
-            if cnt == 5:
-                break
+
             cnt+=1
             
         self.saveTrainingVideo(training_output)

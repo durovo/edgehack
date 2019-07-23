@@ -8,6 +8,9 @@ class Exercise:
         self.name = name
         self.reps  = -1
 
+    def setHuman(self,human):
+        pass
+
     def calculateNextState(self):
         return self.stateFlow[(self.currentState.order + 1) % len(self.stateFlow)]
 

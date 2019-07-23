@@ -235,8 +235,10 @@ def drawLinesTriplets(pose_entries, all_keypoints, img, color, side, part1L, par
 import sys
 if len(sys.argv) > 1:
     processor = sys.argv[1]
+    exercise = sys.argv[2] if len(sys.argv) > 2 else None
 else:
     processor = "cpu"
+    exercise = None
 
 net = PoseEstimationWithMobileNet()
 checkpoint = torch.load('.\checkpoints\checkpoint_iter_370000.pth', map_location=processor)
@@ -261,7 +263,7 @@ def start_bicepCurl(source = None, vid = None):
         for filename in os.listdir(source):
             vid.append(os.path.join(source, filename))
         frame_provider = ImageReader(vid)
-    height_size = 256
+
     cpu = True if processor == "cpu" else False
     from Trainer import Trainer
     from BicepCurl import BicepCurl
@@ -269,8 +271,31 @@ def start_bicepCurl(source = None, vid = None):
     trainer = Trainer(frame_provider,bicepCurl,net)
     trainer.start_training(cpu)
 
+def start_pushup(source = None, vid = None):
+    print(source, vid)
+    if vid is not None:
+        frame_provider = VideoReader(vid)
+    elif source is not None:
+        vid = []
+        for filename in os.listdir(source):
+            vid.append(os.path.join(source, filename))
+        frame_provider = ImageReader(vid)
+
+    cpu = True if processor == "cpu" else False
+    from Trainer import Trainer
+    from Pushup import Pushup
+    pushup = Pushup()
+    trainer = Trainer(frame_provider,pushup,net)
+    trainer.start_training(cpu)
+
 if __name__ == '__main__':
-    vid = 'data/bcurl/bicepCurl.mp4'
-    # start_planks(0, vid)
-    start_bicepCurl(0,vid)
+    if exercise == "bicepcurl":
+        vid = 'data/bcurl/bicepCurl.mp4'
+        # start_planks(0, vid)
+        start_bicepCurl(0,vid)
+    elif exercise == "pushup":
+        vid = 'data/pushup/pushup.mp4'
+        start_pushup(0, vid)
+    elif exercise is None:
+        print ("Please specifiy exercise")
     

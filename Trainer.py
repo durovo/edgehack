@@ -37,6 +37,7 @@ class Trainer(object):
             self.excercise.continueExercise()
             
             training_output.append(self.markTrainee(trainee, frame,self.excercise))
+            #cv2.imwrite('testImg.png',frame)
             if not cpu:
                 cv2.imshow('Output',frame)
                 key = cv2.waitKey(33)
@@ -62,11 +63,11 @@ class Trainer(object):
             if partCoord is not None:
                 cv2.circle(frame,(int(partCoord[0]),int(partCoord[1])),3,(0,255,0),-1)
         
-        curlCoord = trainee.getCoordinate(exercise.side+4)
-        if curlCoord is not None:
-            displayText(str(exercise.curlAngle),curlCoord[0],curlCoord[1],frame)
-            displayText("Reps: "+ str(exercise.reps),50,50,frame)
-            displayText(exercise.currentState.name,50,100,frame)
+        if exercise.currentState is not None:
+            displayText("Distance: " + str(exercise.distanceFromGround),50,20,frame)
+            displayText("Distance: " + str(exercise.elbowDistanceFromHead),50,30,frame)
+            displayText("Reps: "+ str(exercise.reps),50,40,frame)
+            displayText(exercise.currentState.name,50,60,frame)
 
         return frame
 

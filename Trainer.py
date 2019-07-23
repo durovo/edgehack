@@ -33,12 +33,10 @@ class Trainer(object):
 
             pose_entries, all_keypoints = group_keypoints(all_keypoints_by_type, pafs, demo=True)
             pose_entries2, all_keypoints2 = group_keypoints(all_keypoints_by_type2, pafs2, demo=True)
-            for kpt_id in range(all_keypoints.shape[0]):
-                all_keypoints[kpt_id, 0] = (all_keypoints[kpt_id, 0] * stride / upsample_ratio - pad[1]) / scale
-                all_keypoints[kpt_id, 1] = (all_keypoints[kpt_id, 1] * stride / upsample_ratio - pad[0]) / scale
-            for kpt_id in range(all_keypoints2.shape[0]):
-                all_keypoints2[kpt_id, 0] = (all_keypoints2[kpt_id, 0] * stride / upsample_ratio - pad[1]) / scale
-                all_keypoints2[kpt_id, 1] = (all_keypoints2[kpt_id, 1] * stride / upsample_ratio - pad[0]) / scale
+            all_keypoints[:, 0] = (all_keypoints[:, 0] * stride / upsample_ratio - pad[1]) / scale
+            all_keypoints[:, 1] = (all_keypoints[:, 1] * stride / upsample_ratio - pad[0]) / scale
+            all_keypoints2[:, 0] = (all_keypoints2[:, 0] * stride / upsample_ratio - pad[1]) / scale
+            all_keypoints2[:, 1] = (all_keypoints2[:, 1] * stride / upsample_ratio - pad[0]) / scale
             trainee.side.updatePositions(pose_entries[0],all_keypoints)
             trainee.front.updatePositions(pose_entries2[0], all_keypoints2)
             self.excercise.setHuman(trainee)

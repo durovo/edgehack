@@ -13,6 +13,8 @@ class BicepCurl(Exercise):
         self.backAngle = self.getBackAngle()
         statesList = self.getStates()
         super(BicepCurl, self).__init__(statesList, "bicepCurl")
+        self.RESTANGLE = 150
+        self.ACTIVEANGLE = 55
 
     def setHuman(self, human):
         self.human = human
@@ -53,7 +55,7 @@ class BicepCurl(Exercise):
 
     def isInitialStateReached(self):
         #TOD): add other checks to see if he is standing
-        if self.curlAngle > 155:
+        if self.curlAngle > self.RESTANGLE:
             return True
         else:
             return False
@@ -64,13 +66,13 @@ class BicepCurl(Exercise):
         return state
     
     def isConcentricStateReached(self):
-        if self.curlAngle < 155:
+        if self.curlAngle < self.RESTANGLE:
             return True
         else:
             return False
 
     def isActiveStateReached(self):
-        if self.curlAngle < 55:
+        if self.curlAngle < self.ACTIVEANGLE:
             return True
         else:
             return False
@@ -84,7 +86,7 @@ class BicepCurl(Exercise):
         return state
     
     def isEccentricStateReached(self):
-        if self.curlAngle > 55:
+        if self.curlAngle > self.ACTIVEANGLE:
             return True
         else:
             return False

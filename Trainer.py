@@ -54,8 +54,7 @@ class Trainer(object):
         for part in trainee.partIntMap.keys():
             partCoord = trainee.getCoordinate(part)
             cv2.circle(frame,(int(partCoord[0]),int(partCoord[1])),3,(0,255,0),-1)
-        cv2.imwrite('testmarking.jpg',frame)
-
+            
         return frame
 
     def check_state_forms(self):

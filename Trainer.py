@@ -37,8 +37,6 @@ class Trainer(object):
             if self.excercise == "bicepCurl":
                 bicepCurl = BicepCurl(trainee)
                 bicepCurl.continueExercise()
-
-            cnt+=1
             
         self.saveTrainingVideo(training_output)
 

@@ -35,6 +35,9 @@ class Trainer(object):
             trainee.updatePositions(pose_entries[0],all_keypoints)
             self.excercise.setHuman(trainee)
             self.excercise.continueExercise()
+
+            if self.excercise.continuousConstraintViolations > 50:
+                self.excercise.reset()
             
             training_output.append(self.markTrainee(trainee, frame,self.excercise))
             if not cpu:

@@ -239,7 +239,8 @@ else:
     processor = "cpu"
 
 net = PoseEstimationWithMobileNet()
-checkpoint = torch.load('.\checkpoints\checkpoint_iter_370000.pth', map_location=processor)
+modelPath = os.path.join('checkpoints', 'checkpoint_iter_370000.pth')
+checkpoint = torch.load(modelPath, map_location=processor)
 load_state(net, checkpoint)
 
 

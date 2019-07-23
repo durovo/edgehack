@@ -31,7 +31,6 @@ class BicepCurl(Exercise):
     def getElbowAngle(self):
         return self.human.getJointAngle(BodyParts.HIP.value, BodyParts.SHOULDER.value, BodyParts.ELBOW.value, self.side)
 
-
     def getBackAngle(self):
         return self.human.getJointAngle(BodyParts.KNEE.value, BodyParts.HIP.value, BodyParts.SHOULDER.value, self.side)
 
@@ -51,7 +50,7 @@ class BicepCurl(Exercise):
         return self.backAngle > 160
 
     def isInitialStateReached(self):
-        #TOD): add other checks to see if he is standing
+        #TODO: add other checks to see if he is standing
         if self.curlAngle > self.RESTANGLE:
             return True
         else:

@@ -19,10 +19,10 @@ class Squats(Exercise):
         self.CONCENTRICANGLE_KNEE = 120
         self.ACTIVEANGLE_KNEE = 100
         self.ECCENTRICANGLE = 65
-
+    
     def setHuman(self, human):
         self.human = human
-        self.side = BodyParts.LEFT.value if human.side.isFacingLeft(human.side.pose_entries, human.side.all_keypoints) else BodyParts.RIGHT.value
+        self.side = BodyParts.LEFT.value if human.side.isStandingFacingLeft(human.side.pose_entries, human.side.all_keypoints) else BodyParts.RIGHT.value
         self.kneeAngle = self.getKneeAngle()
         self.backAngle = self.getBackAngle()
         self.hipAngle = self.getHipAngle()

@@ -306,6 +306,9 @@ if __name__ == '__main__':
     elif exercise == "pushup":
         vid = 'data/pushup/pushup.mp4'
         start_pushup(0, vid)
+    elif exercise == "squats":
+        vid = 'data/squat/DhruvSquats.mp4'
+        start_squats(0,vid)
     else:
         print ("Please specifiy a valid exercise")
     

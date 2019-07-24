@@ -68,7 +68,7 @@ a{
 	cursor: pointer;
 }
 
-#circle-object {
+#start-pushups {
 	background:white;
 	color: black;
     width: 170px;
@@ -87,7 +87,7 @@ a{
 	transition-duration: 1s;
 }
 
-#circle-object:hover {
+#start-pushups:hover {
 	color: white;
 	background-color: #ef6eae;
 	box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24),0 17px 50px 0 rgba(0,0,0,0.19);
@@ -102,7 +102,7 @@ a{
 	}
 
 
-	#circle-objectify {
+	#start-bicepcurls {
 		background:white;
 		color: black;
 		width: 170px;
@@ -121,7 +121,32 @@ a{
 		transition-duration: 1s;
 	}
 	
-	#circle-objectify:hover {
+	#start-bicepcurls:hover {
+		color: white;
+		background-color: #ef6eae;
+		box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24),0 17px 50px 0 rgba(0,0,0,0.19);
+	}
+
+	#start-squats {
+		background:white;
+		color: black;
+		width: 170px;
+		height: 170px;
+		border-radius: 50%;
+		overflow: hidden;
+		animation: 2.5s ease-in-out 0s infinite normal both running heartbeat;
+		display: inline-block;
+		margin-top: 40px;
+		font-size: 20px;
+		font-weight: bolder;
+		border-color: #ef6eae;
+		border-width: 5px;
+		border-style: solid;
+		cursor: pointer;
+		transition-duration: 1s;
+	}
+	
+	#start-squats:hover {
 		color: white;
 		background-color: #ef6eae;
 		box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24),0 17px 50px 0 rgba(0,0,0,0.19);

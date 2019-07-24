@@ -1,5 +1,5 @@
-from demo import infer_fast, extract_keypoints,group_keypoints,displayText
 from human import *
+from demo import infer_fast, extract_keypoints,group_keypoints
 from BicepCurl import BicepCurl
 import cv2
 
@@ -41,14 +41,23 @@ class Trainer(object):
                 all_keypoints2[kpt_id, 1] = (all_keypoints2[kpt_id, 1] * stride / upsample_ratio - pad[0]) / scale
             trainee.side.updatePositions(pose_entries[0],all_keypoints)
             trainee.front.updatePositions(pose_entries2[0], all_keypoints2)
+
+            if len(pose_entries) == 0:
+                continue
+                
+            trainee.updatePositions(pose_entries[0],all_keypoints)
             self.excercise.setHuman(trainee)
             self.excercise.continueExercise()
+
+            if self.excercise.currentState and self.excercise.currentState.constraintViolations >= 5:
+                self.excercise.reset()
             
             training_output.append(self.markTrainee(trainee, frame,self.excercise))
+            #cv2.imwrite('testImg.png',frame)
             if not cpu:
                 cv2.imshow('Output',frame)
                 key = cv2.waitKey(33)
-                if key ==27:
+                if key == 27:
                     return
         
         self.saveTrainingVideo(training_output)
@@ -96,9 +105,7 @@ class Trainer(object):
                     is_form_correct = form.check()
                     if not is_form_correct:
                         self.mouth.speak(form.message)
+        
+        exercise.displayText(frame)
 
-    def check_state_direction(self):
-        if self.excercise.state.is_motion_state:
-            is_direction_correct = self.excercise.state.direction.check_direction()
-            if not is_direction_correct:
-                self.mouth.speak(self.excercise.state.direction.message)
+        return frame

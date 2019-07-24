@@ -163,14 +163,6 @@ def printAngle(angle, x, y, img, font_color=(255, 255, 255)):
         angle = int(angle)
     displayText(angle, x, y, img, font_color)
 
-def displayText(text, x, y, img, font_color=(255, 255, 255)):
-    cv2.putText(img, str(text), 
-                (int(x), int(y)), 
-                font, 
-                fontScale,
-                font_color,
-                lineType)
-
 def checkDistance(pose_entries, all_keypoints, side, part1, part2):
     part1_global = pose_entries[partIntMap[side+part1]]
     part1 = all_keypoints[int(part1_global), 0:2]
@@ -241,14 +233,26 @@ def drawLinesTriplets(pose_entries, all_keypoints, img, color, side, part1L, par
 
 
 
+<<<<<<< HEAD
 # import sys
 # if len(sys.argv) > 1:
 #     processor = sys.argv[1]
 # else:
 #     processor = "cpu"
 processor = "cuda"
+=======
+import sys
+if len(sys.argv) > 1:
+    processor = sys.argv[1]
+    exercise = sys.argv[2] if len(sys.argv) > 2 else None
+else:
+    processor = "cpu"
+    exercise = None
+
+>>>>>>> 1709dc4ecbda11ed8ba30fb4db5521a4db18d52b
 net = PoseEstimationWithMobileNet()
-checkpoint = torch.load('.\checkpoints\checkpoint_iter_370000.pth', map_location=processor)
+modelPath = os.path.join('checkpoints', 'checkpoint_iter_370000.pth')
+checkpoint = torch.load(modelPath, map_location=processor)
 load_state(net, checkpoint)
 
 
@@ -264,13 +268,13 @@ def start_planks(source=0,vid=None):
 def start_excercise(source, vid, excercise):
     print(source, vid)
     if vid is not None:
-        frame_provider = VideoReader(vid)
+        frame_provider = CameraReader(0)
     elif source is not None:
         vid = []
         for filename in os.listdir(source):
             vid.append(os.path.join(source, filename))
         frame_provider = ImageReader(vid)
-    height_size = 256
+
     cpu = True if processor == "cpu" else False
     print(cpu)
     from Trainer import Trainer
@@ -287,8 +291,31 @@ def start_bicepCurl(source = None, vid = None):
     bicepCurl = BicepCurl()
     start_excercise(source, vid, bicepCurl)
 
+def start_pushup(source = None, vid = None):
+    print(source, vid)
+    if vid is not None:
+        frame_provider = VideoReader(vid)
+    elif source is not None:
+        vid = []
+        for filename in os.listdir(source):
+            vid.append(os.path.join(source, filename))
+        frame_provider = ImageReader(vid)
+
+    cpu = True if processor == "cpu" else False
+    from Trainer import Trainer
+    from Pushup import Pushup
+    pushup = Pushup()
+    trainer = Trainer(frame_provider,pushup,net)
+    trainer.start_training(cpu)
+
 if __name__ == '__main__':
-    vid = 'DhruvSquats.mp4'
-    # start_planks(0, vid)
-    start_squats(0,vid)
+    if exercise == "bicepcurl":
+        vid = 'data/bcurl/bicepCurl.mp4'
+        # start_planks(0, vid)
+        start_bicepCurl(0,vid)
+    elif exercise == "pushup":
+        vid = 'data/pushup/pushup.mp4'
+        start_pushup(0, vid)
+    else:
+        print ("Please specifiy a valid exercise")
     

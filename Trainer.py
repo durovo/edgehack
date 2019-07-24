@@ -1,7 +1,8 @@
-from demo import infer_fast, extract_keypoints,group_keypoints,displayText
 from human import *
+from demo import infer_fast, extract_keypoints,group_keypoints
 from BicepCurl import BicepCurl
 import cv2
+from Utils.HelperMethods import displayText
 
 class Trainer(object):
     def __init__(self, frame_provider, excercise, net):
@@ -39,14 +40,23 @@ class Trainer(object):
             all_keypoints2[:, 1] = (all_keypoints2[:, 1] * stride / upsample_ratio - pad[0]) / scale
             trainee.side.updatePositions(pose_entries[0],all_keypoints)
             trainee.front.updatePositions(pose_entries2[0], all_keypoints2)
+
+            if len(pose_entries) == 0:
+                continue
+                
+            trainee.side.updatePositions(pose_entries[0],all_keypoints)
             self.excercise.setHuman(trainee)
             self.excercise.continueExercise()
+
+            if self.excercise.currentState and self.excercise.currentState.constraintViolations >= 5:
+                self.excercise.reset()
             
             training_output.append(self.markTrainee(trainee, frame,self.excercise))
+            #cv2.imwrite('testImg.png',frame)
             if not cpu:
                 cv2.imshow('Output',frame)
                 key = cv2.waitKey(33)
-                if key ==27:
+                if key == 27:
                     return
         
         self.saveTrainingVideo(training_output)
@@ -63,22 +73,22 @@ class Trainer(object):
         video.release()
 
     def markTrainee(self,trainee,frame,exercise):
-        for part in trainee.partIntMap.keys():
-            partCoord = trainee.getCoordinate(part)
+        for part in trainee.side.partIntMap.keys():
+            partCoord = trainee.side.getCoordinate(part)
             if partCoord is not None:
                 cv2.circle(frame,(int(partCoord[0]),int(partCoord[1])),3,(0,255,0),-1)
-        kneeCoord = trainee.getCoordinate(LEFT + KNEE)
-        hipCoord = trainee.getCoordinate(LEFT+HIP)
+        kneeCoord = trainee.side.getCoordinate(LEFT + KNEE)
+        hipCoord = trainee.side.getCoordinate(LEFT+HIP)
         if exercise.currentState is not None:
                 # displayText("Distance: " + str(exercise.distanceFromGround),50,20,frame)
                 # displayText("Error: " + str(exercise.continuousConstraintViolations),50,30,frame)
                 displayText("Reps: "+ str(exercise.reps),50,40,frame)
                 displayText(exercise.currentState.name,50,60,frame)
         if kneeCoord is not None:
-            wkaAngle = trainee.getJointAngle(HIP, KNEE, ANKLE, LEFT)
+            wkaAngle = trainee.side.getJointAngle(HIP, KNEE, ANKLE, LEFT)
             displayText(str(wkaAngle), kneeCoord[0], kneeCoord[1], frame)
 
-            hipAngle = trainee.getJointAngle(SHOULDER, HIP, KNEE, LEFT)
+            hipAngle = trainee.side.getJointAngle(SHOULDER, HIP, KNEE, LEFT)
             displayText(str(hipAngle), hipCoord[0], hipCoord[1], frame)
         # curlCoord = trainee.getCoordinate(exercise.side+4)
         # if curlCoord is not None:
@@ -94,9 +104,7 @@ class Trainer(object):
                     is_form_correct = form.check()
                     if not is_form_correct:
                         self.mouth.speak(form.message)
+        
+        exercise.displayText(frame)
 
-    def check_state_direction(self):
-        if self.excercise.state.is_motion_state:
-            is_direction_correct = self.excercise.state.direction.check_direction()
-            if not is_direction_correct:
-                self.mouth.speak(self.excercise.state.direction.message)
+        return frame

@@ -19,7 +19,6 @@ class Exercise:
     def transitionToNextState(self):
         self.currentState = self.nextState
         self.nextState = self.calculateNextState()
-        self.currentState.constraintViolations = 0
 
     def checkAndUpdateState(self):
         if self.nextState.isStateReached():
@@ -37,7 +36,7 @@ class Exercise:
         print ("Reseting rep")
         self.nextState = self.stateFlow[0]
         self.isExerciseReset = True
-
+        self.resetViolations()
     
     def continueExercise(self, data):
         if self.currentState is None:
@@ -54,3 +53,6 @@ class Exercise:
         if self.currentState is not None:
             displayText("Reps: "+ str(self.reps),50,40,frame)
             displayText(self.currentState.name,50,60,frame)
+
+    def resetViolations():
+        pass

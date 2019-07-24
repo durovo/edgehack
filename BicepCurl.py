@@ -7,13 +7,20 @@ import numpy as np
 
 class BicepCurl(Exercise):
     def __init__(self):
-        self.constraints = [Constraint(self.isCorrectElbow), Constraint(self.isCorrectBack)]
+        self.resetViolations()
+        self.constraints = [Constraint(self.isCorrectElbow, self.elbowToleranceExceeded), Constraint(self.isCorrectBack, self.backToleranceExceeded)]
         statesList = self.getStates()
         super(BicepCurl, self).__init__(statesList, "bicepCurl")
         self.RESTANGLE = 150
         self.CONCENTRICANGLE = 140
         self.ACTIVEANGLE = 55
         self.ECCENTRICANGLE = 65
+        self.MAXELBOWVIOLATIONS = 5
+        self.MAXBACKVIOLATIONS = 3
+
+    def resetViolations(self):
+        self.backViolations = 0
+        self.elbowViolations = 0
 
     def setHuman(self, human):
         self.human = human
@@ -41,14 +48,22 @@ class BicepCurl(Exercise):
         print(curlAngle)
         return curlAngle
 
+    def elbowToleranceExceeded(self):
+        return self.elbowViolations >= self.MAXELBOWVIOLATIONS
+    
+    def backToleranceExceeded(self):
+        return self.backViolations >= self.MAXBACKVIOLATIONS
+
     def isCorrectElbow(self,raiseError=None):
         if raiseError:
+            self.elbowViolations += 1
             print ("Bring your elbow closer to your body. Elbow angle", str(self.elbowAngle))
         return True if self.elbowAngle is np.nan else self.elbowAngle < 40
     
     def isCorrectBack(self,raiseError=None):
         if raiseError:
             print ("Straighten your back. Back angle", str(self.backAngle))
+            self.backViolations += 1
         return True if self.backAngle is np.nan else self.backAngle > 80
 
     def isInitialStateReached(self):

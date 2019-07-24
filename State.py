@@ -15,5 +15,7 @@ class State:
         self.previousPosition = self.currentPosition
         self.currentPosition = data
 
+    def isToleranceExceeded(self):
+        return any(constraint.checkTolerance() for constraint in self.constraints)
 
 

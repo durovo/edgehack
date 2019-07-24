@@ -49,7 +49,7 @@ class Trainer(object):
                 self.excercise.setHuman(trainee)
                 self.excercise.continueExercise()
 
-                if self.excercise.currentState and self.excercise.currentState.constraintViolations >= 5:
+                if self.excercise.currentState and self.excercise.currentState.isToleranceExceeded():
                     self.excercise.reset()
                 
                 self.markTrainee(trainee.side, side_frame,self.excercise)

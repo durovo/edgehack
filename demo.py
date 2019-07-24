@@ -258,16 +258,11 @@ def start_planks(source=0,vid=None):
     cpu = True if processor == "cpu" else False
     run_demo(net, frame_provider, height_size, cpu)
 
-def get_frameProvider(source,vid):
-    if vid is not None:
-        frame_provider = CameraReader(0,1)
-        if not frame_provider.isOpened1 or not frame_provider.isOpened2:
-            frame_provider = VideoReader(vid)
-    elif source is not None:
-        vid = []
-        for filename in os.listdir(source):
-            vid.append(os.path.join(source, filename))
-        frame_provider = ImageReader(vid)
+def get_frameProvider(source,vid=None):
+    if vid is None:
+        frame_provider = CameraReader(0)
+    else:
+        frame_provider = VideoReader(vid)
     
     return frame_provider
 
@@ -276,7 +271,6 @@ def start_bicepCurl(source = None, vid = None):
     frame_provider = get_frameProvider(source,vid)
 
     cpu = True if processor == "cpu" else False
-    print(cpu)
     from Trainer import Trainer
     from BicepCurl import BicepCurl
     bicepcurl = BicepCurl()
@@ -308,7 +302,7 @@ if __name__ == '__main__':
     if exercise == "bicepcurl":
         vid = 'data/bcurl/bicepCurl.mp4'
         # start_planks(0, vid)
-        start_bicepCurl(0,vid)
+        start_bicepCurl(0)
     elif exercise == "pushup":
         vid = 'data/pushup/pushup.mp4'
         start_pushup(0, vid)

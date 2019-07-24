@@ -1,4 +1,5 @@
 import cv2
+import numpy as np
 
 class ImageReader(object):
     def __init__(self, file_names):
@@ -19,7 +20,7 @@ class ImageReader(object):
         return img
 
 class CameraReader(object):
-    def __init__(self, source1,source2=0):
+    def __init__(self, source1,source2=None):
         self.source1 = source1
         self.source2 = source2
         self.cap1 = cv2.VideoCapture(self.source1)
@@ -32,7 +33,7 @@ class CameraReader(object):
             self.isOpened2 = False
 
     def __iter__(self):
-        if not self.cap1.isOpened() or not self.cap2.isOpened():
+        if not self.cap1.isOpened() and not self.cap2.isOpened():
             raise IOError('Video {} cannot be opened'.format("webcam"))
         return self
 
@@ -40,8 +41,10 @@ class CameraReader(object):
         was_read1, img1 = self.cap1.read()
         was_read2, img2 = self.cap2.read()
 
-        if not was_read1 or not was_read2:
+        if not was_read1:
             raise StopIteration
+        if not was_read2:
+            img2 = np.zeros_like(img1)
         return img1,img2
 
 class VideoReader(object):

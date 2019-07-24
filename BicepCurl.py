@@ -16,7 +16,7 @@ class BicepCurl(Exercise):
 
     def setHuman(self, human):
         self.human = human
-        self.side = BodyParts.LEFT.value if human.isFacingLeft() else BodyParts.RIGHT.value
+        self.side = BodyParts.LEFT.value if human.isStandingFacingLeft() else BodyParts.RIGHT.value
         self.elbowAngle = self.human.getJointAngle(BodyParts.HIP.value, BodyParts.SHOULDER.value, BodyParts.ELBOW.value, self.side)
         self.curlAngle = self.getCurlAngle()
         self.backAngle = self.getBackAngle()

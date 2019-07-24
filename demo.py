@@ -35,19 +35,19 @@ def infer_fast(net, img1, img2, net_input_height_size, stride, upsample_ratio, c
         tensor_img2 = tensor_img2.cuda()
     tensor_img = torch.stack((tensor_img1, tensor_img2))
     stages_output = net(tensor_img)
-
-    stage2_heatmaps = stages_output[-2]
-    heatmaps = np.transpose(stage2_heatmaps[0].cpu().data.numpy(), (1, 2, 0))
+    stage2_heatmaps1 = stages_output[-2]
+    stage2_heatmaps2 = stages_output[0]
+    heatmaps = np.transpose(stage2_heatmaps1[0].cpu().data.numpy(), (1, 2, 0))
     heatmaps = cv2.resize(heatmaps, (0, 0), fx=upsample_ratio, fy=upsample_ratio, interpolation=cv2.INTER_CUBIC)
-    heatmaps2 = np.transpose(stage2_heatmaps[1].cpu().data.numpy(), (1, 2, 0))
-    heatmaps2 = cv2.resize(heatmaps, (0, 0), fx=upsample_ratio, fy=upsample_ratio, interpolation=cv2.INTER_CUBIC)
+    heatmaps2 = np.transpose(stage2_heatmaps2[0].cpu().data.numpy(), (1, 2, 0))
+    heatmaps2 = cv2.resize(heatmaps2, (0, 0), fx=upsample_ratio, fy=upsample_ratio, interpolation=cv2.INTER_CUBIC)
 
-    stage2_pafs = stages_output[-1]
-    pafs = np.transpose(stage2_pafs[0].cpu().data.numpy(), (1, 2, 0))
+    stage2_pafs1 = stages_output[-1]
+    stage2_pafs2 = stages_output[1]
+    pafs = np.transpose(stage2_pafs1[0].cpu().data.numpy(), (1, 2, 0))
     pafs = cv2.resize(pafs, (0, 0), fx=upsample_ratio, fy=upsample_ratio, interpolation=cv2.INTER_CUBIC)
-    pafs2 = np.transpose(stage2_pafs[1].cpu().data.numpy(), (1, 2, 0))
-    pafs2 = cv2.resize(pafs, (0, 0), fx=upsample_ratio, fy=upsample_ratio, interpolation=cv2.INTER_CUBIC)
-
+    pafs2 = np.transpose(stage2_pafs2[0].cpu().data.numpy(), (1, 2, 0))
+    pafs2 = cv2.resize(pafs2, (0, 0), fx=upsample_ratio, fy=upsample_ratio, interpolation=cv2.INTER_CUBIC)
     return heatmaps, pafs, scale, pad, heatmaps2, pafs2, scale, pad2
 
 font                   = cv2.FONT_HERSHEY_SIMPLEX

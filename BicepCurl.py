@@ -17,8 +17,8 @@ class BicepCurl(Exercise):
 
     def setHuman(self, human):
         self.human = human
-        self.side = BodyParts.LEFT.value if human.isStandingFacingLeft() else BodyParts.RIGHT.value
-        self.elbowAngle = self.human.getJointAngle(BodyParts.HIP.value, BodyParts.SHOULDER.value, BodyParts.ELBOW.value, self.side)
+        self.side = BodyParts.LEFT.value if human.side.isStandingFacingLeft() else BodyParts.RIGHT.value
+        self.elbowAngle = self.getElbowAngle()
         self.curlAngle = self.getCurlAngle()
         self.backAngle = self.getBackAngle()
 
@@ -31,13 +31,13 @@ class BicepCurl(Exercise):
         return [restingState, concentricState, activeState, eccentricState]
 
     def getElbowAngle(self):
-        return self.human.getJointAngle(BodyParts.HIP.value, BodyParts.SHOULDER.value, BodyParts.ELBOW.value, self.side)
+        return self.human.side.getJointAngle(BodyParts.HIP.value, BodyParts.SHOULDER.value, BodyParts.ELBOW.value, self.side)
 
     def getBackAngle(self):
-        return self.human.getSlopeAngle(BodyParts.HIP.value, BodyParts.SHOULDER.value, self.side)
+        return self.human.side.getSlopeAngle(BodyParts.HIP.value, BodyParts.SHOULDER.value, self.side)
 
     def getCurlAngle(self):
-        curlAngle = self.human.getJointAngle(BodyParts.SHOULDER.value, BodyParts.ELBOW.value, BodyParts.WRIST.value, self.side)
+        curlAngle = self.human.side.getJointAngle(BodyParts.SHOULDER.value, BodyParts.ELBOW.value, BodyParts.WRIST.value, self.side)
         print(curlAngle)
         return curlAngle
 

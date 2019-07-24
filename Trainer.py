@@ -2,6 +2,7 @@ from human import *
 from demo import infer_fast, extract_keypoints,group_keypoints
 from BicepCurl import BicepCurl
 import cv2
+from Utils.HelperMethods import displayText
 
 class Trainer(object):
     def __init__(self, frame_provider, excercise, net):
@@ -45,7 +46,7 @@ class Trainer(object):
             if len(pose_entries) == 0:
                 continue
                 
-            trainee.updatePositions(pose_entries[0],all_keypoints)
+            trainee.side.updatePositions(pose_entries[0],all_keypoints)
             self.excercise.setHuman(trainee)
             self.excercise.continueExercise()
 
@@ -74,22 +75,22 @@ class Trainer(object):
         video.release()
 
     def markTrainee(self,trainee,frame,exercise):
-        for part in trainee.partIntMap.keys():
-            partCoord = trainee.getCoordinate(part)
+        for part in trainee.side.partIntMap.keys():
+            partCoord = trainee.side.getCoordinate(part)
             if partCoord is not None:
                 cv2.circle(frame,(int(partCoord[0]),int(partCoord[1])),3,(0,255,0),-1)
-        kneeCoord = trainee.getCoordinate(LEFT + KNEE)
-        hipCoord = trainee.getCoordinate(LEFT+HIP)
+        kneeCoord = trainee.side.getCoordinate(LEFT + KNEE)
+        hipCoord = trainee.side.getCoordinate(LEFT+HIP)
         if exercise.currentState is not None:
                 # displayText("Distance: " + str(exercise.distanceFromGround),50,20,frame)
                 # displayText("Error: " + str(exercise.continuousConstraintViolations),50,30,frame)
                 displayText("Reps: "+ str(exercise.reps),50,40,frame)
                 displayText(exercise.currentState.name,50,60,frame)
         if kneeCoord is not None:
-            wkaAngle = trainee.getJointAngle(HIP, KNEE, ANKLE, LEFT)
+            wkaAngle = trainee.side.getJointAngle(HIP, KNEE, ANKLE, LEFT)
             displayText(str(wkaAngle), kneeCoord[0], kneeCoord[1], frame)
 
-            hipAngle = trainee.getJointAngle(SHOULDER, HIP, KNEE, LEFT)
+            hipAngle = trainee.side.getJointAngle(SHOULDER, HIP, KNEE, LEFT)
             displayText(str(hipAngle), hipCoord[0], hipCoord[1], frame)
         # curlCoord = trainee.getCoordinate(exercise.side+4)
         # if curlCoord is not None:

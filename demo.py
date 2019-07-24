@@ -233,14 +233,6 @@ def drawLinesTriplets(pose_entries, all_keypoints, img, color, side, part1L, par
 
 
 
-<<<<<<< HEAD
-# import sys
-# if len(sys.argv) > 1:
-#     processor = sys.argv[1]
-# else:
-#     processor = "cpu"
-processor = "cuda"
-=======
 import sys
 if len(sys.argv) > 1:
     processor = sys.argv[1]
@@ -249,7 +241,6 @@ else:
     processor = "cpu"
     exercise = None
 
->>>>>>> 1709dc4ecbda11ed8ba30fb4db5521a4db18d52b
 net = PoseEstimationWithMobileNet()
 modelPath = os.path.join('checkpoints', 'checkpoint_iter_370000.pth')
 checkpoint = torch.load(modelPath, map_location=processor)
@@ -265,41 +256,44 @@ def start_planks(source=0,vid=None):
     cpu = True if processor == "cpu" else False
     run_demo(net, frame_provider, height_size, cpu)
 
-def start_excercise(source, vid, excercise):
-    print(source, vid)
+def get_frameProvider(source,vid):
     if vid is not None:
         frame_provider = CameraReader(0)
+        if not frame_provider.isOpened:
+            frame_provider = VideoReader(vid)
     elif source is not None:
         vid = []
         for filename in os.listdir(source):
             vid.append(os.path.join(source, filename))
         frame_provider = ImageReader(vid)
+    
+    return frame_provider
+
+def start_bicepCurl(source = None, vid = None):
+    print(source, vid)
+    frame_provider = get_frameProvider(source,vid)
 
     cpu = True if processor == "cpu" else False
     print(cpu)
     from Trainer import Trainer
-    trainer = Trainer(frame_provider,excercise,net)
+    from BicepCurl import BicepCurl
+    bicepcurl = BicepCurl()
+    trainer = Trainer(frame_provider,bicepcurl,net)
     trainer.start_training(cpu)
 
 def start_squats(source = None, vid = None):
     from Squats import Squats
+    from Trainer import Trainer
+    print(source, vid)
+    cpu = True if processor == "cpu" else False
+    frame_provider = get_frameProvider(source,vid)
     squats = Squats()
-    start_excercise(source, vid, squats)
-
-def start_bicepCurl(source = None, vid = None):
-    from BicepCurl import BicepCurl
-    bicepCurl = BicepCurl()
-    start_excercise(source, vid, bicepCurl)
+    trainer = Trainer(frame_provider,squats,net)
+    trainer.start_training(cpu)
 
 def start_pushup(source = None, vid = None):
     print(source, vid)
-    if vid is not None:
-        frame_provider = VideoReader(vid)
-    elif source is not None:
-        vid = []
-        for filename in os.listdir(source):
-            vid.append(os.path.join(source, filename))
-        frame_provider = ImageReader(vid)
+    frame_provider = get_frameProvider(source,vid)
 
     cpu = True if processor == "cpu" else False
     from Trainer import Trainer

@@ -15,31 +15,42 @@ from Checker import Checker
 from readers import ImageReader, CameraReader, VideoReader
 
 
-def infer_fast(net, img, net_input_height_size, stride, upsample_ratio, cpu,
+def infer_fast(net, img1, img2, net_input_height_size, stride, upsample_ratio, cpu,
                pad_value=(0, 0, 0), img_mean=(128, 128, 128), img_scale=1/256):
-    height, width, _ = img.shape
+    height, width, _ = img1.shape
     scale = net_input_height_size / height
 
-    scaled_img = cv2.resize(img, (0, 0), fx=scale, fy=scale, interpolation=cv2.INTER_CUBIC)
-    scaled_img = normalize(scaled_img, img_mean, img_scale)
-    min_dims = [net_input_height_size, max(scaled_img.shape[1], net_input_height_size)]
-    padded_img, pad = pad_width(scaled_img, stride, pad_value, min_dims)
+    scaled_img1 = cv2.resize(img1, (0, 0), fx=scale, fy=scale, interpolation=cv2.INTER_CUBIC)
+    scaled_img2 = cv2.resize(img2, (0, 0), fx=scale, fy=scale, interpolation=cv2.INTER_CUBIC)
+    scaled_img1 = normalize(scaled_img1, img_mean, img_scale)
+    scaled_img2 = normalize(scaled_img2, img_mean, img_scale)
+    min_dims = [net_input_height_size, max(scaled_img1.shape[1], net_input_height_size)]
+    padded_img1, pad = pad_width(scaled_img1, stride, pad_value, min_dims)
+    padded_img2, pad2 = pad_width(scaled_img2, stride, pad_value, min_dims)
 
-    tensor_img = torch.from_numpy(padded_img).permute(2, 0, 1).unsqueeze(0).float()
+    tensor_img1 = torch.from_numpy(padded_img1).permute(2, 0, 1).float()
+    tensor_img2 = torch.from_numpy(padded_img2).permute(2, 0, 1).float()    
     if not cpu:
+        tensor_img = torch.stack((tensor_img1, tensor_img2))
         tensor_img = tensor_img.cuda()
-
+        # tensor_img1 = tensor_img1.cuda()
+        # tensor_img2 = tensor_img2.cuda()
+    # tensor_img = torch.stack((tensor_img1, tensor_img2))
     stages_output = net(tensor_img)
-
-    stage2_heatmaps = stages_output[-2]
-    heatmaps = np.transpose(stage2_heatmaps.squeeze().cpu().data.numpy(), (1, 2, 0))
+    stage2_heatmaps1 = stages_output[-2]
+    stage2_heatmaps2 = stages_output[0]
+    heatmaps = np.transpose(stage2_heatmaps1[0].cpu().data.numpy(), (1, 2, 0))
     heatmaps = cv2.resize(heatmaps, (0, 0), fx=upsample_ratio, fy=upsample_ratio, interpolation=cv2.INTER_CUBIC)
+    heatmaps2 = np.transpose(stage2_heatmaps2[0].cpu().data.numpy(), (1, 2, 0))
+    heatmaps2 = cv2.resize(heatmaps2, (0, 0), fx=upsample_ratio, fy=upsample_ratio, interpolation=cv2.INTER_CUBIC)
 
-    stage2_pafs = stages_output[-1]
-    pafs = np.transpose(stage2_pafs.squeeze().cpu().data.numpy(), (1, 2, 0))
+    stage2_pafs1 = stages_output[-1]
+    stage2_pafs2 = stages_output[1]
+    pafs = np.transpose(stage2_pafs1[0].cpu().data.numpy(), (1, 2, 0))
     pafs = cv2.resize(pafs, (0, 0), fx=upsample_ratio, fy=upsample_ratio, interpolation=cv2.INTER_CUBIC)
-
-    return heatmaps, pafs, scale, pad
+    pafs2 = np.transpose(stage2_pafs2[0].cpu().data.numpy(), (1, 2, 0))
+    pafs2 = cv2.resize(pafs2, (0, 0), fx=upsample_ratio, fy=upsample_ratio, interpolation=cv2.INTER_CUBIC)
+    return heatmaps, pafs, scale, pad, heatmaps2, pafs2, scale, pad2
 
 font                   = cv2.FONT_HERSHEY_SIMPLEX
 bottomLeftCornerOfText = (10,500)
@@ -249,8 +260,8 @@ def start_planks(source=0,vid=None):
 
 def get_frameProvider(source,vid):
     if vid is not None:
-        frame_provider = CameraReader(0)
-        if not frame_provider.isOpened:
+        frame_provider = CameraReader(0,1)
+        if not frame_provider.isOpened1 or not frame_provider.isOpened2:
             frame_provider = VideoReader(vid)
     elif source is not None:
         vid = []
@@ -265,10 +276,21 @@ def start_bicepCurl(source = None, vid = None):
     frame_provider = get_frameProvider(source,vid)
 
     cpu = True if processor == "cpu" else False
+    print(cpu)
     from Trainer import Trainer
     from BicepCurl import BicepCurl
-    bicepCurl = BicepCurl()
-    trainer = Trainer(frame_provider,bicepCurl,net)
+    bicepcurl = BicepCurl()
+    trainer = Trainer(frame_provider,bicepcurl,net)
+    trainer.start_training(cpu)
+
+def start_squats(source = None, vid = None):
+    from Squats import Squats
+    from Trainer import Trainer
+    print(source, vid)
+    cpu = True if processor == "cpu" else False
+    frame_provider = get_frameProvider(source,vid)
+    squats = Squats()
+    trainer = Trainer(frame_provider,squats,net)
     trainer.start_training(cpu)
 
 def start_pushup(source = None, vid = None):

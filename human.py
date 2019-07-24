@@ -16,6 +16,13 @@ EAR = 10
 
 class Human(object):
     def __init__(self):
+        self.side = Skeleton("side")
+        self.front = Skeleton("front")
+    
+
+class Skeleton(object):
+    def __init__(self, view):
+        self.view = view
         self.initPartsDict()
     
     def updatePositions(self, pose_entries, all_keypoints):

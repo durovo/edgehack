@@ -38,6 +38,7 @@ class Exercise:
         self.nextState = self.stateFlow[0]
         self.isExerciseReset = True
 
+    
     def continueExercise(self, data):
         if self.currentState is None:
             self.checkAndUpdateState()

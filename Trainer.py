@@ -41,21 +41,20 @@ class Trainer(object):
                 all_keypoints2[kpt_id, 0] = (all_keypoints2[kpt_id, 0] * stride / upsample_ratio - pad2[1]) / scale2
                 all_keypoints2[kpt_id, 1] = (all_keypoints2[kpt_id, 1] * stride / upsample_ratio - pad2[0]) / scale2
 
-            if len(pose_entries) == 0:
-                continue
+            if len(pose_entries) * len(pose_entries2) != 0:
                 
-            trainee.side.updatePositions(pose_entries[0],all_keypoints)
-            trainee.front.updatePositions(pose_entries2[0], all_keypoints2)
-            
-            self.excercise.setHuman(trainee)
-            self.excercise.continueExercise()
+                trainee.side.updatePositions(pose_entries[0],all_keypoints)
+                trainee.front.updatePositions(pose_entries2[0], all_keypoints2)
+                
+                self.excercise.setHuman(trainee)
+                self.excercise.continueExercise()
 
-            if self.excercise.currentState and self.excercise.currentState.constraintViolations >= 5:
-                self.excercise.reset()
-            
-            self.markTrainee(trainee.side, side_frame,self.excercise)
-            self.markTrainee(trainee.front, front_frame,self.excercise)
-            #cv2.imwrite('testImg.png',frame)
+                if self.excercise.currentState and self.excercise.currentState.constraintViolations >= 5:
+                    self.excercise.reset()
+                
+                self.markTrainee(trainee.side, side_frame,self.excercise)
+                self.markTrainee(trainee.front, front_frame,self.excercise)
+
             if not cpu:
                 output_frame = np.concatenate((front_frame,side_frame), axis=1)
                 training_output.append(output_frame)

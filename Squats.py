@@ -1,31 +1,34 @@
 from Exercise import Exercise
 from State import State
 from Utils.Constants import Direction,BodyParts
+from Utils.HelperMethods import displayText
 from Constraint import Constraint
-import math
+import numpy as np
 
 class Squats(Exercise):
     def __init__(self):
         back_constraint = Constraint(self.isCorrectBack)
         lowerleg_constraint = Constraint(self.isLowerLegStraight)
-        thigh_constraint = Constraint(self.isCorrectThigh)
-        self.rest_constraints = [back_constraint, lowerleg_constraint]
-        self.motion_constraints = self.rest_constraints
-        self.active_constraints = [back_constraint, lowerleg_constraint, thigh_constraint]
+        knee_constraint = Constraint(self.isCorrectKnee)
+        self.constraints = [knee_constraint]
         statesList = self.getStates()
         super(Squats, self).__init__(statesList, "Squats")
-        self.RESTANGLE_KNEE = 150
-        self.RESTANGLE_HIP = 170
-        self.CONCENTRICANGLE_KNEE = 120
-        self.ACTIVEANGLE_KNEE = 100
-        self.ECCENTRICANGLE = 65
+        self.RESTANGLE_KNEE = 80
+        self.RESTANGLE_BACK = 80
+        self.RESTTHIGHANGLE = 80
+        self.ACTIVETHIGHANGLE = 20
+        self.CONCENTRICTHIGHANGLE = 70
+        self.ECCENTRICTHIGHANGLE = 30
+
+        self.MINBACKANGLE = 50
+        self.MINKNEEANGLE = 50
     
     def setHuman(self, human):
         self.human = human
-        self.side = BodyParts.LEFT.value if human.side.isStandingFacingLeft(human.side.pose_entries, human.side.all_keypoints) else BodyParts.RIGHT.value
-        self.kneeAngle = self.getKneeAngle()
+        self.side = BodyParts.LEFT.value if human.side.isStandingFacingLeft() else BodyParts.RIGHT.value
+        self.lowerLegAngle = self.getLowerLegAngle()
         self.backAngle = self.getBackAngle()
-        self.hipAngle = self.getHipAngle()
+        self.thighAngle = self.getThighAngle()
 
     def getStates(self):
         restingState = self.getInitialState()
@@ -35,80 +38,87 @@ class Squats(Exercise):
 
         return [restingState, concentricState, activeState, eccentricState]
 
-    def getKneeAngle(self):
-        return self.human.side.getJointAngle(BodyParts.HIP.value, BodyParts.KNEE.value, BodyParts.ANKLE.value, self.side)
-
+    def getLowerLegAngle(self):
+        return self.human.side.getSlopeAngle(BodyParts.KNEE.value, BodyParts.ANKLE.value, self.side)
 
     def getBackAngle(self):
-        return self.human.side.getJointAngle(BodyParts.KNEE.value, BodyParts.HIP.value, BodyParts.SHOULDER.value, self.side)
+        return self.human.side.getSlopeAngle(BodyParts.HIP.value, BodyParts.SHOULDER.value, self.side)
 
-    def getHipAngle(self):
-        return self.human.side.getJointAngle(BodyParts.SHOULDER.value, BodyParts.HIP.value, BodyParts.KNEE.value, self.side)
+    def getThighAngle(self):
+        return self.human.side.getSlopeAngle(BodyParts.HIP.value, BodyParts.KNEE.value, self.side)
 
-    def isCorrectThigh(self,raiseError=None):
-        # return True
-        if raiseError:
-            print ("Keep your thighs parallel to the ground.", self.kneeCoord[1], self.hipCoord[1])
-        self.kneeCoord = self.human.side.getCoordinate(BodyParts.KNEE.value + self.side)
-        self.hipCoord = self.human.side.getCoordinate(BodyParts.HIP.value + self.side)
-        return abs(self.kneeCoord[1]-self.hipCoord[1]) < 40
-    
     def isCorrectBack(self,raiseError=None):
-        return True
         if raiseError:
-            print ("Straighten your back.", str(self.backAngle))
-        return abs(self.backAngle - self.kneeAngle) > 20
+            print ("Straighten your back: ", str(self.backAngle))
+        return True if self.backAngle is np.nan else self.backAngle> self.MINBACKANGLE
+
+    def isCorrectKnee(self,raiseError=None):
+        if raiseError:
+            print ("Knees too close.", str(self.backAngle))
+        rightHip = self.human.front.getPoint(BodyParts.HIP.value, BodyParts.RIGHT.value)
+        leftHip = self.human.front.getPoint(BodyParts.HIP.value, BodyParts.LEFT.value)
+        rightKnee = self.human.front.getPoint(BodyParts.KNEE.value, BodyParts.RIGHT.value)
+        leftKnee = self.human.front.getPoint(BodyParts.KNEE.value, BodyParts.LEFT.value)
+
+        if not(rightHip.isNullPoint() or leftHip.isNullPoint() or rightKnee.isNullPoint() or leftKnee.isNullPoint()):
+            return rightKnee.coord[0] <= rightHip.coord[0] and leftKnee.coord[0] >= leftHip.coord[0]
+        else:
+            return True
 
     def isLowerLegStraight(self, raiseError=None):
-        return True
         if raiseError:
-            print ("Align your knees to your feet.")
-        kneeCoord = self.human.side.getCoordinate(BodyParts.KNEE.value + self.side)
-        ankleCoord = self.human.side.getCoordinate(BodyParts.ANKLE.value + self.side)
-        return abs(kneeCoord[0]-ankleCoord[0]) < 10
+            print ("Align your knees to your feet: ", self.lowerLegAngle)
+
+        return True if self.lowerLegAngle is np.nan else self.lowerLegAngle > self.MINKNEEANGLE
 
     def isInitialStateReached(self):
         #TOD): add other checks to see if he is standing
-        if self.kneeAngle > self.RESTANGLE_KNEE and self.hipAngle > self.RESTANGLE_HIP:
+        if self.lowerLegAngle > self.RESTANGLE_KNEE and self.backAngle > self.RESTANGLE_BACK and self.thighAngle > self.RESTTHIGHANGLE:
             return True
         else:
             return False
 
     def getInitialState(self):
-        state = State(Direction.Rest.value, self.rest_constraints,0, self.isInitialStateReached, "Resting")
+        state = State(self.constraints,0, self.isInitialStateReached, "Resting")
 
         return state
     
     def isConcentricStateReached(self): 
-        if self.kneeAngle < self.RESTANGLE_KNEE:
+        if self.thighAngle <= self.CONCENTRICTHIGHANGLE:
             return True
         else:
             return False
 
     def isActiveStateReached(self):
-        if self.kneeAngle < self.ACTIVEANGLE_KNEE:
+        if self.thighAngle < self.ACTIVETHIGHANGLE:
             return True
         else:
             return False
 
     def getConcentricState(self):
-        state = State(Direction.Concentric.value, self.motion_constraints,1, self.isConcentricStateReached, "Concentric")
+        state = State(self.constraints,1, self.isConcentricStateReached, "Concentric")
         return state
 
     def getActiveState(self):
-        state = State(Direction.Rest.value, self.active_constraints,2, self.isActiveStateReached, "Active")
+        state = State(self.constraints,2, self.isActiveStateReached, "Active")
         return state
     
     def isEccentricStateReached(self):
-        print("The knee angle is ", self.kneeAngle)
-        if self.kneeAngle > self.ACTIVEANGLE_KNEE:
+        if self.thighAngle > self.ECCENTRICTHIGHANGLE:
             return True
         else:
             return False
 
     def getEccentricState(self):
-        state = State(Direction.Eccentric.value, self.motion_constraints,3, self.isEccentricStateReached, "Eccentric")
+        state = State(self.constraints,3, self.isEccentricStateReached, "Eccentric")
         return state
         
     def continueExercise(self):
-        super().continueExercise(self.kneeAngle)
+        super().continueExercise(self.thighAngle)
+
+    def displayText(self, frame,view):
+        super().displayText(frame)
+        if view == "side":
+            displayText("Backangle: "+ str(self.backAngle),50,80,frame)
+            displayText("Thigh angle"+ str(self.thighAngle),50,120,frame)
+            displayText("lower leg angle"+ str(self.lowerLegAngle),50,150,frame)

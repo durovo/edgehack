@@ -258,7 +258,7 @@ def start_planks(source=0,vid=None):
 
 def get_frameProvider(source,vid=None):
     if vid is None:
-        frame_provider = CameraReader(0)
+        frame_provider = CameraReader(0,1)
     else:
         frame_provider = VideoReader(vid)
     
@@ -305,8 +305,8 @@ if __name__ == '__main__':
         vid = 'data/pushup/pushup.mp4'
         start_pushup(0, vid)
     elif exercise == "squats":
-        vid = 'data/squat/DhruvSquats.mp4'
-        start_squats(0,vid)
+        #vid = 'data/squat/DhruvSquats.mp4'
+        start_squats(0)
     else:
         print ("Please specifiy a valid exercise")
     

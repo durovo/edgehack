@@ -3,6 +3,7 @@ from State import State
 from Utils.Constants import Direction,BodyParts
 from Constraint import Constraint
 from Utils.HelperMethods import displayText
+import numpy as np
 
 class BicepCurl(Exercise):
     def __init__(self):
@@ -43,12 +44,12 @@ class BicepCurl(Exercise):
     def isCorrectElbow(self,raiseError=None):
         if raiseError:
             print ("Bring your elbow closer to your body. Elbow angle", str(self.elbowAngle))
-        return self.elbowAngle < 40
+        return True if self.elbowAngle is np.nan else self.elbowAngle < 40
     
     def isCorrectBack(self,raiseError=None):
         if raiseError:
             print ("Straighten your back. Back angle", str(self.backAngle))
-        return self.backAngle > 80
+        return True if self.backAngle is np.nan else self.backAngle > 80
 
     def isInitialStateReached(self):
         #TODO: add other checks to see if he is standing

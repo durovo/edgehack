@@ -96,7 +96,7 @@ class BicepCurl(Exercise):
     def continueExercise(self):
         super().continueExercise(self.curlAngle)
 
-    def displayText(self, frame):
+    def displayText(self, frame, view):
         super().displayText(frame)
         displayText("Curl angle: "+ str(round(self.curlAngle,2)),50,80,frame)
         displayText("Back angle: "+ str(round(self.backAngle,2)),50,100,frame)

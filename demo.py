@@ -31,9 +31,11 @@ def infer_fast(net, img1, img2, net_input_height_size, stride, upsample_ratio, c
     tensor_img1 = torch.from_numpy(padded_img1).permute(2, 0, 1).float()
     tensor_img2 = torch.from_numpy(padded_img2).permute(2, 0, 1).float()    
     if not cpu:
-        tensor_img1 = tensor_img1.cuda()
-        tensor_img2 = tensor_img2.cuda()
-    tensor_img = torch.stack((tensor_img1, tensor_img2))
+        tensor_img = torch.stack((tensor_img1, tensor_img2))
+        tensor_img = tensor_img.cuda()
+        # tensor_img1 = tensor_img1.cuda()
+        # tensor_img2 = tensor_img2.cuda()
+    # tensor_img = torch.stack((tensor_img1, tensor_img2))
     stages_output = net(tensor_img)
 
     stage2_heatmaps = stages_output[-2]
@@ -258,8 +260,8 @@ def start_planks(source=0,vid=None):
 
 def get_frameProvider(source,vid):
     if vid is not None:
-        frame_provider = CameraReader(0)
-        if not frame_provider.isOpened:
+        frame_provider = CameraReader(0,1)
+        if not frame_provider.isOpened1 or not frame_provider.isOpened2:
             frame_provider = VideoReader(vid)
     elif source is not None:
         vid = []

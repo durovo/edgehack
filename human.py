@@ -89,7 +89,22 @@ class Human(object):
         part3_global = self.pose_entries[self.partIntMap[side+part3]]
         part3 = self.all_keypoints[int(part3_global), 0:2]
 
-        td = part2-part3
+        if part2[0] < part1[0]:
+            return True
+        return False
+
+    def isStandingFacingLeft(self):
+        side = LEFT
+        part1 = EAR
+        part2 = EYE
+        part1_global = self.pose_entries[self.partIntMap[side+part1]]
+        if part1_global == -1:
+            side = RIGHT
+            part1_global = self.pose_entries[self.partIntMap[side+part1]]
+        part1 = self.all_keypoints[int(part1_global), 0:2]
+        part2_global = self.pose_entries[self.partIntMap[side+part2]]
+        part2 = self.all_keypoints[int(part2_global), 0:2]
+
         if part2[0] < part1[0]:
             return True
         return False

@@ -247,15 +247,22 @@ def start_planks(source=0,vid=None):
     cpu = True if processor == "cpu" else False
     run_demo(net, frame_provider, height_size, cpu)
 
-def start_bicepCurl(source = None, vid = None):
-    print(source, vid)
+def get_frameProvider(source,vid):
     if vid is not None:
         frame_provider = CameraReader(0)
+        if not frame_provider.isOpened:
+            frame_provider = VideoReader(vid)
     elif source is not None:
         vid = []
         for filename in os.listdir(source):
             vid.append(os.path.join(source, filename))
         frame_provider = ImageReader(vid)
+    
+    return frame_provider
+
+def start_bicepCurl(source = None, vid = None):
+    print(source, vid)
+    frame_provider = get_frameProvider(source,vid)
 
     cpu = True if processor == "cpu" else False
     from Trainer import Trainer
@@ -266,13 +273,7 @@ def start_bicepCurl(source = None, vid = None):
 
 def start_pushup(source = None, vid = None):
     print(source, vid)
-    if vid is not None:
-        frame_provider = VideoReader(vid)
-    elif source is not None:
-        vid = []
-        for filename in os.listdir(source):
-            vid.append(os.path.join(source, filename))
-        frame_provider = ImageReader(vid)
+    frame_provider = get_frameProvider(source,vid)
 
     cpu = True if processor == "cpu" else False
     from Trainer import Trainer

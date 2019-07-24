@@ -21,8 +21,11 @@ class ImageReader(object):
 class CameraReader(object):
     def __init__(self, source):
         self.source = source
-    def __iter__(self):
         self.cap = cv2.VideoCapture(self.source)
+        self.isOpened = True
+        if not self.cap.isOpened():
+            self.isOpened = False
+    def __iter__(self):
         if not self.cap.isOpened():
             raise IOError('Video {} cannot be opened'.format("webcam"))
         return self

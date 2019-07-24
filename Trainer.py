@@ -3,18 +3,22 @@ from demo import infer_fast, extract_keypoints,group_keypoints
 from BicepCurl import BicepCurl
 import cv2
 from Utils.HelperMethods import displayText
+import torch
+import torchvision
 
 class Trainer(object):
     def __init__(self, frame_provider, excercise, net):
         self.frame_provider = frame_provider
         self.excercise = excercise
-        self.net = net
+        self.net = torchvision.models.detection.keypointrcnn_resnet50_fpn(pretrained=True)
+        self.net.eval() 
 
     def start_training(self,cpu):
         trainee = Human()
         training_output=[]
         cnt = 0
-        for side_frame,front_frame in self.frame_provider:
+        for side_frame in self.frame_provider:
+            front_frame = side_frame.copy()
             net = self.net.eval()
             if not cpu:
                 net = self.net.cuda()
@@ -25,27 +29,10 @@ class Trainer(object):
             total_keypoints_num = 0
             total_keypoints_num2 = 0
 
-            heatmaps, pafs, scale, pad, heatmaps2, pafs2, scale2, pad2 = infer_fast(net, side_frame, front_frame, height_size, stride, upsample_ratio, cpu)
-            all_keypoints_by_type = []
-            all_keypoints_by_type2 = []
-            for kpt_idx in range(18):  # 19th for bg
-                total_keypoints_num += extract_keypoints(heatmaps[:, :, kpt_idx], all_keypoints_by_type, total_keypoints_num)
-                total_keypoints_num2 += extract_keypoints(heatmaps2[:, :, kpt_idx], all_keypoints_by_type2, total_keypoints_num2)
-
-            pose_entries, all_keypoints = group_keypoints(all_keypoints_by_type, pafs, demo=True)
-            pose_entries2, all_keypoints2 = group_keypoints(all_keypoints_by_type2, pafs2, demo=True)
-            for kpt_id in range(all_keypoints.shape[0]):
-                all_keypoints[kpt_id, 0] = (all_keypoints[kpt_id, 0] * stride / upsample_ratio - pad[1]) / scale
-                all_keypoints[kpt_id, 1] = (all_keypoints[kpt_id, 1] * stride / upsample_ratio - pad[0]) / scale
-            for kpt_id in range(all_keypoints2.shape[0]):
-                all_keypoints2[kpt_id, 0] = (all_keypoints2[kpt_id, 0] * stride / upsample_ratio - pad2[1]) / scale2
-                all_keypoints2[kpt_id, 1] = (all_keypoints2[kpt_id, 1] * stride / upsample_ratio - pad2[0]) / scale2
-
-            if len(pose_entries) == 0:
-                continue
+            output_dict = infer_fast(net, side_frame, front_frame, height_size, stride, upsample_ratio, cpu)
                 
-            trainee.side.updatePositions(pose_entries[0],all_keypoints)
-            trainee.front.updatePositions(pose_entries2[0], all_keypoints2)
+            trainee.side.updatePositions(output_dict[0])
+            trainee.front.updatePositions(output_dict[1])
             
             self.excercise.setHuman(trainee)
             self.excercise.continueExercise()
@@ -56,7 +43,7 @@ class Trainer(object):
             self.markTrainee(trainee.side, side_frame,self.excercise)
             self.markTrainee(trainee.front, front_frame,self.excercise)
             #cv2.imwrite('testImg.png',frame)
-            if not cpu:
+            if True:
                 output_frame = np.concatenate((front_frame,side_frame), axis=1)
                 training_output.append(output_frame)
                 cv2.imshow('Output',output_frame)

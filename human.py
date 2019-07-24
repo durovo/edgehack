@@ -25,9 +25,8 @@ class Skeleton(object):
         self.view = view
         self.initPartsDict()
     
-    def updatePositions(self, pose_entries, all_keypoints):
-        self.pose_entries = pose_entries
-        self.all_keypoints = all_keypoints
+    def updatePositions(self, keypoints_dict):
+        self.keypoints_dict = keypoints_dict
 
     def getJointAngle(self, joint1, fulcrum, joint2, side=0):
         joint1Point = self.getPoint(joint1,side)
@@ -49,9 +48,11 @@ class Skeleton(object):
         
     def getCoordinate(self, joint):
         #print(joint)
-        keyPointKey = int(self.pose_entries[self.partIntMap[joint]])
+        
+        keyPointKey = self.keypoints_dict['keypoints'][0][self.partIntMap[joint]][2].data.cpu().numpy()
+        # print(keyPointKey)
         if keyPointKey >= 0:
-            return self.all_keypoints[keyPointKey, 0:2]
+            return self.keypoints_dict['keypoints'][0][self.partIntMap[joint]][0:2].data.cpu().numpy()
         else:
             return None
 
@@ -62,23 +63,23 @@ class Skeleton(object):
     def initPartsDict(self):
         self.partIntMap = {
             101: 11,
-            201: 8,
-            102: 12,
-            202: 9,
+            201: 12,
+            102: 13,
+            202: 14,
             3: 0,
-            104: 6,
-            204: 3,
-            205: 2,
+            104: 7,
+            204: 8,
+            205: 6,
             105: 5,
             6: 1,
-            107: 15,
-            207: 14,
-            208: 4,
-            108: 7,
-            209: 10,
-            109: 13,
-            110: 16,
-            210: 17
+            107: 1,
+            207: 2,
+            208: 10,
+            108: 9,
+            209: 16,
+            109: 15,
+            110: 3,
+            210: 4
         }
 
     def isFacingLeft(self):
@@ -86,17 +87,12 @@ class Skeleton(object):
         part1 = HIP
         part2 = SHOULDER
         part3 = ELBOW
-        part1_global = self.pose_entries[self.partIntMap[side+part1]]
-        if part1_global == -1:
-            side = RIGHT
-            part1_global = self.pose_entries[self.partIntMap[side+part1]]
-        part1 = self.all_keypoints[int(part1_global), 0:2]
-        part2_global = self.pose_entries[self.partIntMap[side+part2]]
-        part2 = self.all_keypoints[int(part2_global), 0:2]
-        part3_global = self.pose_entries[self.partIntMap[side+part3]]
-        part3 = self.all_keypoints[int(part3_global), 0:2]
 
-        if part2[0] < part1[0]:
+        p1_c = self.getCoordinate(side+part1)
+        p2_c = self.getCoordinate(side+part2)
+        p3_c = self.getCoordinate(side+part3)
+
+        if p2_c[0] < p1_c[0]:
             return True
         return False
 
@@ -104,13 +100,11 @@ class Skeleton(object):
         side = LEFT
         part1 = EAR
         part2 = EYE
-        part1_global = self.pose_entries[self.partIntMap[side+part1]]
-        if part1_global == -1:
+        part1_global = self.getCoordinate(side+part1)
+        if part1_global is None:
             side = RIGHT
-            part1_global = self.pose_entries[self.partIntMap[side+part1]]
-        part1 = self.all_keypoints[int(part1_global), 0:2]
-        part2_global = self.pose_entries[self.partIntMap[side+part2]]
-        part2 = self.all_keypoints[int(part2_global), 0:2]
+        part1 = self.getCoordinate(side+part1)
+        part2 = self.getCoordinate(side+part2)
 
         if part2[0] < part1[0]:
             return True

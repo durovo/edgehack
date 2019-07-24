@@ -16,41 +16,32 @@ from readers import ImageReader, CameraReader, VideoReader
 
 
 def infer_fast(net, img1, img2, net_input_height_size, stride, upsample_ratio, cpu,
-               pad_value=(0, 0, 0), img_mean=(128, 128, 128), img_scale=1/256):
+               pad_value=(0, 0, 0), img_mean=(0.5, 0.5, 0.5), img_scale=1/256):
     height, width, _ = img1.shape
     scale = net_input_height_size / height
-
+    
     scaled_img1 = cv2.resize(img1, (0, 0), fx=scale, fy=scale, interpolation=cv2.INTER_CUBIC)
-    scaled_img2 = cv2.resize(img2, (0, 0), fx=scale, fy=scale, interpolation=cv2.INTER_CUBIC)
     scaled_img1 = normalize(scaled_img1, img_mean, img_scale)
+    scaled_img2 = cv2.resize(img2, (0, 0), fx=scale, fy=scale, interpolation=cv2.INTER_CUBIC)
     scaled_img2 = normalize(scaled_img2, img_mean, img_scale)
-    min_dims = [net_input_height_size, max(scaled_img1.shape[1], net_input_height_size)]
-    padded_img1, pad = pad_width(scaled_img1, stride, pad_value, min_dims)
-    padded_img2, pad2 = pad_width(scaled_img2, stride, pad_value, min_dims)
+    print(scaled_img1.shape)
+    # print(net)
+    # scaled_img1 = normalize(scaled_img1, img_mean, img_scale)
+    # scaled_img2 = normalize(scaled_img2, img_mean, img_scale)
+    # min_dims = [net_input_height_size, max(scaled_img1.shape[1], net_input_height_size)]
 
-    tensor_img1 = torch.from_numpy(padded_img1).permute(2, 0, 1).float()
-    tensor_img2 = torch.from_numpy(padded_img2).permute(2, 0, 1).float()    
+    tensor_img1 = torch.from_numpy(scaled_img1).permute(2, 0, 1).float()
+    tensor_img2 = torch.from_numpy(scaled_img2).permute(2, 0, 1).float()    
     if not cpu:
-        tensor_img = torch.stack((tensor_img1, tensor_img2))
-        tensor_img = tensor_img.cuda()
-        # tensor_img1 = tensor_img1.cuda()
-        # tensor_img2 = tensor_img2.cuda()
-    # tensor_img = torch.stack((tensor_img1, tensor_img2))
-    stages_output = net(tensor_img)
-    stage2_heatmaps1 = stages_output[-2]
-    stage2_heatmaps2 = stages_output[0]
-    heatmaps = np.transpose(stage2_heatmaps1[0].cpu().data.numpy(), (1, 2, 0))
-    heatmaps = cv2.resize(heatmaps, (0, 0), fx=upsample_ratio, fy=upsample_ratio, interpolation=cv2.INTER_CUBIC)
-    heatmaps2 = np.transpose(stage2_heatmaps2[0].cpu().data.numpy(), (1, 2, 0))
-    heatmaps2 = cv2.resize(heatmaps2, (0, 0), fx=upsample_ratio, fy=upsample_ratio, interpolation=cv2.INTER_CUBIC)
-
-    stage2_pafs1 = stages_output[-1]
-    stage2_pafs2 = stages_output[1]
-    pafs = np.transpose(stage2_pafs1[0].cpu().data.numpy(), (1, 2, 0))
-    pafs = cv2.resize(pafs, (0, 0), fx=upsample_ratio, fy=upsample_ratio, interpolation=cv2.INTER_CUBIC)
-    pafs2 = np.transpose(stage2_pafs2[0].cpu().data.numpy(), (1, 2, 0))
-    pafs2 = cv2.resize(pafs2, (0, 0), fx=upsample_ratio, fy=upsample_ratio, interpolation=cv2.INTER_CUBIC)
-    return heatmaps, pafs, scale, pad, heatmaps2, pafs2, scale, pad2
+        # tensor_img = torch.stack((tensor_img1, tensor_img2))
+        # tensor_img = tensor_img.cuda()
+        tensor_img1 = tensor_img1.cuda()
+        tensor_img2 = tensor_img2.cuda()
+    tensor_img = [tensor_img1, tensor_img2]
+    # print(tensor_img.shape)
+    output_dict = net(tensor_img)
+    print(output_dict[0]['keypoints'][0][0][0:2])
+    return output_dict
 
 font                   = cv2.FONT_HERSHEY_SIMPLEX
 bottomLeftCornerOfText = (10,500)
@@ -300,14 +291,14 @@ def start_pushup(source = None, vid = None):
 
 if __name__ == '__main__':
     if exercise == "bicepcurl":
-        vid = 'data/bcurl/bicepCurl.mp4'
+        vid = 'DhruvSquats.mp4'
         # start_planks(0, vid)
-        start_bicepCurl(0)
+        start_bicepCurl(0, vid)
     elif exercise == "pushup":
         vid = 'data/pushup/pushup.mp4'
         start_pushup(0, vid)
     elif exercise == "squats":
-        vid = 'data/squat/DhruvSquats.mp4'
+        vid = 'DhruvSquats.mp4'
         start_squats(0,vid)
     else:
         print ("Please specifiy a valid exercise")

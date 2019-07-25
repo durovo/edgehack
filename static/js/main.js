@@ -58,10 +58,12 @@ function start_squats(ele,conv) {
 }
 
 
+
 function stop_exercise(ele, conv) {
     $.getJSON('/stop',
         function(data) {
             console.log("Stopping Excercise");
+            $('#name').val("");
         }
     );
 }
@@ -79,7 +81,25 @@ $(function() {
     //     },11000)
     //     return false;
     // });
-    
+    function start_exercise(exercise) {
+        var name_box = $('#name');
+
+        if (name_box.val().length == 0)
+        {
+            name_box.addClass('important');
+            return false;
+        }
+
+        flip_buttons(false);
+        exercise();
+        return false;
+    }
+
+    var name_box = $('#name');
+    name_box.on('keydown', function(){
+        name_box.removeClass('important');
+    });
+
     var stop_button = $('#stop-exercise')
     stop_button.bind('click', function() {
         flip_buttons(true);
@@ -89,24 +109,19 @@ $(function() {
 
     var squats_button =  $('#start-squats')
     squats_button.bind('click', function() {
-        flip_buttons(false);
-        start_squats();
-        return false;
+        return start_exercise(start_squats);
     });
 
     var bicepcurls_button =  $('#start-bicepcurls')
     bicepcurls_button.bind('click', function() {
-        flip_buttons(false);
-        start_bicepcurls();
-        return false;
+        return start_exercise(start_bicepcurls);
     });
 
     var pushups_button =  $('#start-pushups')
     pushups_button.bind('click', function() {
-        flip_buttons(false);
-        start_pushups();
-        return false;
+        return start_exercise(start_pushups);
     });
+
     exercise_buttons = [squats_button, bicepcurls_button, pushups_button]
     function flip_buttons(display)
     {

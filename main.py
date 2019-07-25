@@ -43,15 +43,15 @@ def home():
 
 @app.route("/bicepcurls")
 def start_bicepcurls_async():
-    start_exercise_async(start_bicepcurl)
+    return start_exercise_async(start_bicepcurl)
 
 @app.route("/pushups")
 def start_pushups_async():
-    start_exercise_async(start_squats)
+    return start_exercise_async(start_squats)
 
 @app.route("/squats")
 def start_squats_async():
-    start_exercise_async(start_pushups)
+    return start_exercise_async(start_pushups)
 
 @app.route("/stop")
 def stop_exercise():
@@ -67,6 +67,7 @@ def start_exercise_async(excercise_function):
     exercise_thread = Thread(target = excercise_function)
     exercise_thread.daemon = True
     exercise_thread.start()
+    return jsonify(exercise_status = "started")
 
 # @app.route("/bot")
 # def startTrainerBot():

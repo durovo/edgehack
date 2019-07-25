@@ -6,7 +6,8 @@ import numpy as np
 from Utils.HelperMethods import displayText
 
 class Pushup(Exercise):
-    def __init__(self):
+    def __init__(self,tts):
+        self.tts = tts
         self.constraints = [Constraint(self.isCorrectBack)]
         statesList = self.getStates()
         super(Pushup, self).__init__(statesList, "pushup")
@@ -49,11 +50,13 @@ class Pushup(Exercise):
     def isCorrectElbow(self,raiseError=None):
         if raiseError:
             if self.elbowDistanceFromHead is not np.nan:
+                self.tts.BotSpeak(6, "Move elbows closer")            
                 print ("Bring your elbow closer to your body. Elbow angle", str(self.elbowDistanceFromHead))
         return self.elbowDistanceFromHead < 40
     
     def isCorrectBack(self,raiseError=None):
-        if raiseError:
+        if raiseError and not self.backAngle is np.nan :
+            self.tts.BotSpeak(3, "Straighten back")            
             print ("Straighten your back. Back angle", str(self.backAngle))
         return self.backAngle > 160
 

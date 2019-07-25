@@ -6,7 +6,8 @@ from Constraint import Constraint
 import numpy as np
 
 class Squats(Exercise):
-    def __init__(self):
+    def __init__(self,tts):
+        self.tts = tts
         self.resetViolations()
         back_constraint = Constraint(self.isCorrectBack, self.backToleranceExceeded)
         lowerleg_constraint = Constraint(self.isLowerLegStraight, self.lowerLegToleranceExceeded)
@@ -71,20 +72,23 @@ class Squats(Exercise):
         return self.kneeViolations >= self.MAXKNEEVIOLATIONS
 
     def isCorrectBack(self,raiseError=None):
-        if raiseError:
+        if raiseError and not self.backAngle is np.nan:
+            self.tts.BotSpeak(3, "Straighten back")            
             print ("Straighten your back: ", str(self.backAngle))
             self.backViolations += 1
         return True if self.backAngle is np.nan else self.backAngle> self.MINBACKANGLE
 
     def isCorrectKnee(self,raiseError=None):
-        if raiseError:
+        if raiseError and not self.backAngle is np.nan:
+            self.tts.BotSpeak(4, "Widen knees")            
             print ("Knees too close.", str(self.backAngle))
             self.kneeViolations += 1
         
         return self.leftThighAngle < self.MAXFRONTTHIGHANGLE and self.rightThighAngle < self.MAXFRONTTHIGHANGLE
 
     def isLowerLegStraight(self, raiseError=None):
-        if raiseError:
+        if raiseError and not self.lowerLegAngle is np.nan:
+            self.tts.BotSpeak(5, "Move knees back")            
             print ("Align your knees to your feet: ", self.lowerLegAngle)
             self.lowerLegViolations += 1
 

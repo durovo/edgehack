@@ -7,6 +7,7 @@ from Trainer import Trainer
 from BicepCurl import BicepCurl
 from Pushup import Pushup
 from Squats import Squats
+from TextToSpeech as tts
 
 cpu = False
 processor = "cuda"
@@ -19,26 +20,26 @@ load_state(net, checkpoint)
 
 def get_frameProvider(vid=None):
     if vid is None:
-        frame_provider = CameraReader(0,0)
+        frame_provider = CameraReader(0,1)
     else:
         frame_provider = VideoReader(vid)
     
     return frame_provider
 
 def start_bicepcurl(vid = None):
-    frame_provider = get_frameProvider('DhruvSquats.mp4')  
-    bicepcurl = BicepCurl()
+    frame_provider = get_frameProvider()  
+    bicepcurl = BicepCurl(tts)
     trainer = Trainer(frame_provider,bicepcurl,net)
     trainer.start_training(cpu)
 
 def start_pushups(vid = None):
-    frame_provider = get_frameProvider('DhruvSquats.mp4')  
-    pushup = Pushup()
+    frame_provider = get_frameProvider()  
+    pushup = Pushup(tts)
     trainer = Trainer(frame_provider,pushup,net)
     trainer.start_training(cpu)
 
 def start_squats(vid = None):
-    frame_provider = get_frameProvider('DhruvSquats.mp4')  
-    squats = Squats()
+    frame_provider = get_frameProvider()  
+    squats = Squats(tts)
     trainer = Trainer(frame_provider,squats,net)
     trainer.start_training(cpu)

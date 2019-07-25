@@ -6,7 +6,8 @@ from Utils.HelperMethods import displayText
 import numpy as np
 
 class BicepCurl(Exercise):
-    def __init__(self):
+    def __init__(self,tts):
+        self.tts = tts
         self.resetViolations()
         self.constraints = [Constraint(self.isCorrectElbow, self.elbowToleranceExceeded), Constraint(self.isCorrectBack, self.backToleranceExceeded)]
         statesList = self.getStates()
@@ -55,13 +56,15 @@ class BicepCurl(Exercise):
         return self.backViolations >= self.MAXBACKVIOLATIONS
 
     def isCorrectElbow(self,raiseError=None):
-        if raiseError:
+        if raiseError and not self.elbowAngle is np.nan:
             self.elbowViolations += 1
+            self.tts.BotSpeak(1, "Move elbows closer")            
             print ("Bring your elbow closer to your body. Elbow angle", str(self.elbowAngle))
         return True if self.elbowAngle is np.nan else self.elbowAngle < 40
     
     def isCorrectBack(self,raiseError=None):
-        if raiseError:
+        if raiseError and not self.backAngle is np.nan:
+            self.tts.BotSpeak(2, "Straighten back")            
             print ("Straighten your back. Back angle", str(self.backAngle))
             self.backViolations += 1
         return True if self.backAngle is np.nan else self.backAngle > 80

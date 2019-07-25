@@ -1,6 +1,6 @@
 from flask import Flask, render_template, redirect, url_for, request,jsonify
 from flask_socketio import SocketIO,emit
-from demo_utils import start_bicepCurl
+from demo_utils import start_bicepcurl, start_pushups, start_squats
 from GlobalHelpers import global_state
 # from GymTrainerBot import *
 import demo
@@ -43,9 +43,15 @@ def home():
 
 @app.route("/bicepcurls")
 def start_bicepcurls_async():
-    exercise_thread = Thread(target = start_bicepCurl)
-    exercise_thread.daemon = True
-    exercise_thread.start()
+    start_exercise_async(start_bicepcurl)
+
+@app.route("/pushups")
+def start_pushups_async():
+    start_exercise_async(start_squats)
+
+@app.route("/squats")
+def start_squats_async():
+    start_exercise_async(start_pushups)
 
 @app.route("/stop")
 def stop_exercise():
@@ -56,6 +62,11 @@ def stop_exercise():
     global_state.continue_training = True
     print("The rep count is ", global_state.rep_count)
     return jsonify(rep_count = global_state.rep_count)
+
+def start_exercise_async(excercise_function):
+    exercise_thread = Thread(target = excercise_function)
+    exercise_thread.daemon = True
+    exercise_thread.start()
 
 # @app.route("/bot")
 # def startTrainerBot():

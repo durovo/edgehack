@@ -152,7 +152,7 @@ a{
 		box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24),0 17px 50px 0 rgba(0,0,0,0.19);
 	}
 
-	#start-exercise {
+	#stop-exercise {
 		background:white;
 		color: black;
 		width: 170px;
@@ -160,7 +160,7 @@ a{
 		border-radius: 50%;
 		overflow: hidden;
 		animation: 2.5s ease-in-out 0s infinite normal both running heartbeat;
-		display: hidden;
+		display: none;
 		margin-top: 40px;
 		font-size: 20px;
 		font-weight: bolder;
@@ -171,7 +171,7 @@ a{
 		transition-duration: 1s;
 	}
 	
-	#start-exercise:hover {
+	#stop-exercise:hover {
 		color: white;
 		background-color: #ef6eae;
 		box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24),0 17px 50px 0 rgba(0,0,0,0.19);

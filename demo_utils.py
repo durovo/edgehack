@@ -5,7 +5,8 @@ from models.with_mobilenet import PoseEstimationWithMobileNet
 from modules.load_state import load_state
 from Trainer import Trainer
 from BicepCurl import BicepCurl
-import threading
+from Pushup import Pushup
+from Squats import Squats
 
 cpu = False
 processor = "cuda"
@@ -24,8 +25,20 @@ def get_frameProvider(vid=None):
     
     return frame_provider
 
-def start_bicepCurl(vid = None):
+def start_bicepcurl(vid = None):
     frame_provider = get_frameProvider('DhruvSquats.mp4')  
     bicepcurl = BicepCurl()
     trainer = Trainer(frame_provider,bicepcurl,net)
+    trainer.start_training(cpu)
+
+def start_pushups(vid = None):
+    frame_provider = get_frameProvider('DhruvSquats.mp4')  
+    pushup = Pushup()
+    trainer = Trainer(frame_provider,pushup,net)
+    trainer.start_training(cpu)
+
+def start_squats(vid = None):
+    frame_provider = get_frameProvider('DhruvSquats.mp4')  
+    squats = Squats()
+    trainer = Trainer(frame_provider,squats,net)
     trainer.start_training(cpu)

@@ -1,25 +1,32 @@
 from flask import Flask, render_template, redirect, url_for, request,jsonify
 from flask_socketio import SocketIO,emit
-from GymTrainerBot import *
+from demo_utils import start_bicepcurl, start_pushups, start_squats
+from GlobalHelpers import global_state
+# from GymTrainerBot import *
 import demo
-import threading
+from threading import Thread
 # import mayank
 # import threading
 # from GlobalHelpers import accuracy_queue
 
+
+
+
 app = Flask(__name__)
 socketio = SocketIO(app)
+
+exercise_thread = 0
 # import demo
 # import mayank
 # demo = None
-def queueMessageEmit():
-    while True:
-        text = accuracy_queue.get(block=True)
-        socketio.emit("pysend", {"data": text})
+# def queueMessageEmit():
+#     while True:
+#         text = accuracy_queue.get(block=True)
+#         socketio.emit("pysend", {"data": text})
 
-@socketio.on('connect')
-def handle_connection():
-    socketio.start_background_task(target=queueMessageEmit)
+# @socketio.on('connect')
+# def handle_connection():
+#     socketio.start_background_task(target=queueMessageEmit)
 
 # def sendPySend():
 #     while True:
@@ -34,32 +41,60 @@ def handle_connection():
 def home():
     return render_template("template.html")
 
-@app.route("/bot")
-def startTrainerBot():
-    startBot()
-    return "nothing just run bot"
+@app.route("/bicepcurls")
+def start_bicepcurls_async():
+    return start_exercise_async(start_bicepcurl)
 
-@app.route("/botintro")
-def startTrainerBotIntro():
-    greet = startBotGreeting()
-    return jsonify(buttonName = "Your Name?",botanswers=greet)
+@app.route("/pushups")
+def start_pushups_async():
+    return start_exercise_async(start_squats)
 
-@app.route("/humanIntro")
-def startTrainerHumanIntro():
-    greet = humanIntroduction()
-    return jsonify(buttonName = "Hey there!",botanswers=greet)
+@app.route("/squats")
+def start_squats_async():
+    return start_exercise_async(start_pushups)
 
-@app.route("/askExercise")
-def startTrainerAskExercise():
-    greet = askExercise()
-    if "Great" in greet:
-        demo.start_planks(0)
-    return jsonify(buttonName = "Lets do it!",botanswers=greet)
+@app.route("/stop")
+def stop_exercise():
+    global_state.continue_training = False
+    while not global_state.stopped:
+        a = 1
+    global_state.stopped = False
+    global_state.continue_training = True
+    print("The rep count is ", global_state.rep_count)
+    return jsonify(rep_count = global_state.rep_count)
 
-@app.route("/trainer")
-def startTrainerForced():
-    demo.start_planks(1)
-    return "nothing"
+def start_exercise_async(excercise_function):
+    exercise_thread = Thread(target = excercise_function)
+    exercise_thread.daemon = True
+    exercise_thread.start()
+    return jsonify(exercise_status = "started")
+
+# @app.route("/bot")
+# def startTrainerBot():
+#     startBot()
+#     return "nothing just run bot"
+
+# @app.route("/botintro")
+# def startTrainerBotIntro():
+#     greet = startBotGreeting()
+#     return jsonify(buttonName = "Your Name?",botanswers=greet)
+
+# @app.route("/humanIntro")
+# def startTrainerHumanIntro():
+#     greet = humanIntroduction()
+#     return jsonify(buttonName = "Hey there!",botanswers=greet)
+
+# @app.route("/askExercise")
+# def startTrainerAskExercise():
+#     greet = askExercise()
+#     if "Great" in greet:
+#         demo.start_planks(0)
+#     return jsonify(buttonName = "Lets do it!",botanswers=greet)
+
+# @app.route("/trainer")
+# def startTrainerForced():
+#     demo.start_planks(1)
+#     return "nothing"
 
 if __name__ == "__main__":
     # app.run(debug=True) 

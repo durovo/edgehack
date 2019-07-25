@@ -1,0 +1,2 @@
+class LeaderBoard(object):
+    

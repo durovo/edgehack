@@ -3,6 +3,7 @@ import queue
 botqueue_queue = queue.Queue()
 botlistening = False
 accuracy_queue = queue.Queue()
+global_queue = queue.Queue()
 
 class GlobalState():
     def __init__(self):

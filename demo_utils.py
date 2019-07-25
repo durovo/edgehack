@@ -7,7 +7,7 @@ from Trainer import Trainer
 from BicepCurl import BicepCurl
 from Pushup import Pushup
 from Squats import Squats
-from TextToSpeech as tts
+import TextToSpeech as tts
 
 cpu = False
 processor = "cuda"

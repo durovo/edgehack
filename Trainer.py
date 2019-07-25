@@ -44,7 +44,6 @@ class Trainer(object):
             for kpt_id in range(all_keypoints2.shape[0]):
                 all_keypoints2[kpt_id, 0] = (all_keypoints2[kpt_id, 0] * stride / upsample_ratio - pad2[1]) / scale2
                 all_keypoints2[kpt_id, 1] = (all_keypoints2[kpt_id, 1] * stride / upsample_ratio - pad2[0]) / scale2
-
             if len(pose_entries) * len(pose_entries2) != 0:
                 
                 trainee.side.updatePositions(pose_entries[0],all_keypoints)

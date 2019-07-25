@@ -36,22 +36,22 @@
 //         });
 // }
 
-function start_bicepcurls(ele,conv) {
-    $.getJSON('/bicepcurls',
+function start_bicepcurls(name) {
+    $.getJSON('/bicepcurls?name='+name,
             function(data) {
                 console.log("starting bicepcurls...")
         });
 }
 
-function start_pushups(ele,conv) {
-    $.getJSON('/pushups',
+function start_pushups(name) {
+    $.getJSON('/pushups?name='+name,
             function(data) {
                 console.log("starting pushups...")
         });
 }
 
-function start_squats(ele,conv) {
-    $.getJSON('/squats',
+function start_squats(name) {
+    $.getJSON('/squats?name='+name,
             function(data) {
                 console.log("starting squats...")
         });
@@ -91,7 +91,7 @@ $(function() {
         }
 
         flip_buttons(false);
-        exercise();
+        exercise(name_box.val());
         return false;
     }
 

@@ -8,6 +8,7 @@ from threading import Thread
 # import mayank
 # import threading
 # from GlobalHelpers import accuracy_queue
+import os
 
 
 
@@ -45,21 +46,26 @@ def home():
 def leaderboard():
     return render_template("leaderboard.html")
 
-@app.route("/leaderboard2")
-def leaderboard2():
-    return render_template("leaderboard.html")
-
 @app.route("/bicepcurls")
 def start_bicepcurls_async():
+    global_state.exercise = "bicepcurls"
     return start_exercise_async(start_bicepcurl)
 
 @app.route("/pushups")
 def start_pushups_async():
+    global_state.exercise = "pushups"
     return start_exercise_async(start_squats)
 
 @app.route("/squats")
 def start_squats_async():
+    global_state.exercise = "squats"
     return start_exercise_async(start_pushups)
+
+@app.route("/leaderboarddata")
+def get_leaderboards():
+    sorted_board = global_state.get_leaderboard()
+    print(jsonify(sorted_board))
+    return jsonify(sorted_board)
 
 @app.route("/stop")
 def stop_exercise():
@@ -68,10 +74,14 @@ def stop_exercise():
         a = 1
     global_state.stopped = False
     global_state.continue_training = True
-    print("The rep count is ", global_state.rep_count)
+    print("The rep count is ", global_state.rep_count, global_state.name)
+    global_state.update_leaderboard()
+    global_state.save_leaderboard()
     return jsonify(rep_count = global_state.rep_count)
 
 def start_exercise_async(excercise_function):
+    global_state.name = request.args['name']
+    print(global_state.name)
     exercise_thread = Thread(target = excercise_function)
     exercise_thread.daemon = True
     exercise_thread.start()
@@ -106,5 +116,4 @@ def start_exercise_async(excercise_function):
 
 if __name__ == "__main__":
     # app.run(debug=True) 
-    
     socketio.run(app)

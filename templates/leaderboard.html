@@ -2,6 +2,9 @@
     <header>
         <title>Leader Board</title>
         <link rel="stylesheet" href="{{ url_for('static',filename='css/leaderboard.css') }}">
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='js/leaderboard.js') }}"></script> 
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
     </header>
     <body>
         
@@ -9,8 +12,8 @@
       
       <div class="content" id="container">
         
-<div class="leaderboard flex column wrap" id="right">
-        <div class="leaderboard-table flex column">
+<div class="leaderboard flex column wrap" id="squats">
+        <div class="leaderboard-table flex column" id="squats_board">
           <div class="leaderboard-header flex column grow">
     
               <div class="filter-by flex grow wrap">
@@ -46,8 +49,8 @@
     
       </div>
 
-    <div class="leaderboard flex column wrap" id="center">
-            <div class="leaderboard-table flex column">
+    <div class="leaderboard flex column wrap" id="bicepcurls">
+            <div class="leaderboard-table flex column" id='bicepcurls_board'>
               <div class="leaderboard-header flex column grow">
         
                   <div class="filter-by flex grow wrap">
@@ -82,8 +85,8 @@
           </div>
         
           </div>
-        <div class="leaderboard flex column wrap" id="left">
-                <div class="leaderboard-table flex column">
+        <div class="leaderboard flex column wrap" id="pushups">
+                <div class="leaderboard-table flex column" id='pushups_board'>
                   <div class="leaderboard-header flex column grow">
             
                       <div class="filter-by flex grow wrap">

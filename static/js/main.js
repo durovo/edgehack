@@ -91,7 +91,7 @@ $(function() {
         }
 
         flip_buttons(false);
-        exercise();
+        exercise(name_box.val());
         return false;
     }
 

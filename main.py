@@ -54,8 +54,10 @@ def start_squats_async():
     return start_exercise_async(start_pushups)
 
 @app.route("/stop")
-def stop_exercise():
+def stop_exercise(name):
+    name = request.args.get('trainee_name')
     global_state.continue_training = False
+    global_state.name = name
     while not global_state.stopped:
         a = 1
     global_state.stopped = False

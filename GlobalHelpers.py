@@ -1,9 +1,14 @@
 import random
 import queue
-global_queue = queue.Queue()
+botqueue_queue = queue.Queue()
 botlistening = False
 accuracy_queue = queue.Queue()
 
+class GlobalState():
+    def __init__(self):
+        self.continue_training = True
+        self.rep_count = 0
+global_state = GlobalState()
 botAnswers = {
     "greeting":["Hi, I am your digital smart trainer. What is your name?"],
     "exerciseQuestion":"Hey {} , would you like to do plank.",

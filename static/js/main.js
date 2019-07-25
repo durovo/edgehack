@@ -36,30 +36,55 @@ function askExercise(ele,conv) {
         });
 }
 
-function trainer(ele,conv) {
-    $.getJSON('/trainer',
+function start_bicepcurls(ele,conv) {
+    $.getJSON('/bicepcurls',
             function(data) {
-                console.log("starting trainer...")
+                console.log("starting bicepcurls...")
         });
 }
 
+function stop_excercise(ele, conv) {
+    $.getJSON('/stop',
+        function(data) {
+            console.log("Stopping Excercise");
+        }
+    );
+}
+
 $(function() {
-    var conv = $("#conversations")
-    var ele =  $('#circle-object')
-    ele.bind('click', function() {
-        botintro(ele,conv);
-        setTimeout(() => {
-            humanIntro(ele,conv);
-        }, 5000);
-        setTimeout(()=>{
-            askExercise(ele,conv);
-        },11000)
+    var conv = $("#conversations");
+    // var ele =  $('#circle-object')
+    // ele.bind('click', function() {
+    //     botintro(ele,conv);
+    //     setTimeout(() => {
+    //         humanIntro(ele,conv);
+    //     }, 5000);
+    //     setTimeout(()=>{
+    //         askExercise(ele,conv);
+    //     },11000)
+    //     return false;
+    // });
+    var stop_button = $('#stop-excercise')
+    stop_button.bind('click', function() {
+        stop_excercise();
         return false;
     });
 
-    var mytrainer =  $('#circle-objectify')
-    mytrainer.bind('click', function() {
-        trainer();
+    var squats_button =  $('#start-squats')
+    squats_button.bind('click', function() {
+        start_squats();
+        return false;
+    });
+
+    var bicepcurls_button =  $('#start-bicepcurls')
+    bicepcurls_button.bind('click', function() {
+        start_bicepcurls();
+        return false;
+    });
+
+    var pushups_button =  $('#start-pushups')
+    pushups_button.bind('click', function() {
+        start_pushups();
         return false;
     });
 });

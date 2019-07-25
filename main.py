@@ -7,6 +7,9 @@ import threading
 # import threading
 # from GlobalHelpers import accuracy_queue
 
+
+
+
 app = Flask(__name__)
 socketio = SocketIO(app)
 # import demo
@@ -33,6 +36,9 @@ def handle_connection():
 @app.route("/")
 def home():
     return render_template("template.html")
+
+@app.route("/bicepcurls")
+def start_bicepcurls():
 
 # @app.route("/bot")
 # def startTrainerBot():

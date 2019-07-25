@@ -3,6 +3,7 @@ from demo import infer_fast, extract_keypoints,group_keypoints
 from BicepCurl import BicepCurl
 import cv2
 from Utils.HelperMethods import displayText
+from GlobalHelpers import global_state
 
 class Trainer(object):
     def __init__(self, frame_provider, excercise, net):
@@ -15,6 +16,9 @@ class Trainer(object):
         training_output=[]
         cnt = 0
         for side_frame,front_frame in self.frame_provider:
+            if not global_state.continue_training:
+                global_state.rep_count = self.excercise.reps
+                break
             net = self.net.eval()
             if not cpu:
                 net = self.net.cuda()

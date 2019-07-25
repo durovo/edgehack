@@ -151,3 +151,28 @@ a{
 		background-color: #ef6eae;
 		box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24),0 17px 50px 0 rgba(0,0,0,0.19);
 	}
+
+	#start-exercise {
+		background:white;
+		color: black;
+		width: 170px;
+		height: 170px;
+		border-radius: 50%;
+		overflow: hidden;
+		animation: 2.5s ease-in-out 0s infinite normal both running heartbeat;
+		display: hidden;
+		margin-top: 40px;
+		font-size: 20px;
+		font-weight: bolder;
+		border-color: #ef6eae;
+		border-width: 5px;
+		border-style: solid;
+		cursor: pointer;
+		transition-duration: 1s;
+	}
+	
+	#start-exercise:hover {
+		color: white;
+		background-color: #ef6eae;
+		box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24),0 17px 50px 0 rgba(0,0,0,0.19);
+	}

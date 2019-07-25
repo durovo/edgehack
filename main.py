@@ -1,8 +1,10 @@
 from flask import Flask, render_template, redirect, url_for, request,jsonify
 from flask_socketio import SocketIO,emit
+from demo_utils import start_bicepCurl
+from GlobalHelpers import global_state
 # from GymTrainerBot import *
 import demo
-import threading
+from threading import Thread
 # import mayank
 # import threading
 # from GlobalHelpers import accuracy_queue
@@ -12,17 +14,19 @@ import threading
 
 app = Flask(__name__)
 socketio = SocketIO(app)
+
+exercise_thread = 0
 # import demo
 # import mayank
 # demo = None
-def queueMessageEmit():
-    while True:
-        text = accuracy_queue.get(block=True)
-        socketio.emit("pysend", {"data": text})
+# def queueMessageEmit():
+#     while True:
+#         text = accuracy_queue.get(block=True)
+#         socketio.emit("pysend", {"data": text})
 
-@socketio.on('connect')
-def handle_connection():
-    socketio.start_background_task(target=queueMessageEmit)
+# @socketio.on('connect')
+# def handle_connection():
+#     socketio.start_background_task(target=queueMessageEmit)
 
 # def sendPySend():
 #     while True:
@@ -38,7 +42,20 @@ def home():
     return render_template("template.html")
 
 @app.route("/bicepcurls")
-def start_bicepcurls():
+def start_bicepcurls_async():
+    exercise_thread = Thread(target = start_bicepCurl)
+    exercise_thread.daemon = True
+    exercise_thread.start()
+
+@app.route("/stop")
+def stop_exercise():
+    global_state.continue_training = False
+    while not global_state.stopped:
+        a = 1
+    global_state.stopped = False
+    global_state.continue_training = True
+    print("The rep count is ", global_state.rep_count)
+    return jsonify(rep_count = global_state.rep_count)
 
 # @app.route("/bot")
 # def startTrainerBot():

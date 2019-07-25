@@ -8,6 +8,7 @@ class GlobalState():
     def __init__(self):
         self.continue_training = True
         self.rep_count = 0
+        self.stopped = False
 global_state = GlobalState()
 botAnswers = {
     "greeting":["Hi, I am your digital smart trainer. What is your name?"],

@@ -66,5 +66,5 @@ class VideoReader(object):
         was_read, img = self.cap.read()
         if not was_read:
             raise StopIteration
-        return img
+        return img, img.copy()
 

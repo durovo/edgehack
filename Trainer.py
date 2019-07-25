@@ -68,7 +68,8 @@ class Trainer(object):
                 if key == 27:
                     break
         
-        self.saveTrainingVideo(training_output)
+        # self.saveTrainingVideo(training_output)
+        global_state.stopped = True
 
     def saveTrainingVideo(self,framesList):
         height,width,layers=framesList[0].shape

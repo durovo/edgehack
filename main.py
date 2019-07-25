@@ -41,6 +41,14 @@ exercise_thread = 0
 def home():
     return render_template("template.html")
 
+@app.route("/leaderboard")
+def leaderboard():
+    return render_template("leaderboard.html")
+
+@app.route("/leaderboard2")
+def leaderboard2():
+    return render_template("leaderboard.html")
+
 @app.route("/bicepcurls")
 def start_bicepcurls_async():
     return start_exercise_async(start_bicepcurl)

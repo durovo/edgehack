@@ -1,6 +1,12 @@
 import pyttsx3
 import threading
 from GlobalHelpers import *
+import time
+from collections import defaultdict
+
+message_interval = 5
+
+message_timestamp_dict = defaultdict(lambda: -1)
 
 def engine_thread():
     engine = pyttsx3.init()
@@ -16,4 +22,10 @@ t.start()
 
 def BotSpeak(unique_id, text):
     print("unique_id", unique_id)
-    global_queue.put(text)
+    ctime = time.time()
+    mtime = message_timestamp_dict[unique_id]
+    if ctime - mtime > message_interval or mtime == -1:
+        message_timestamp_dict[unique_id] = time.time()
+        print("speaking message ")
+        global_queue.put(text)
+    

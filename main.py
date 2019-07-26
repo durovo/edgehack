@@ -54,12 +54,12 @@ def start_bicepcurls_async():
 @app.route("/pushups")
 def start_pushups_async():
     global_state.exercise = "pushups"
-    return start_exercise_async(start_squats)
+    return start_exercise_async(start_pushups)
 
 @app.route("/squats")
 def start_squats_async():
     global_state.exercise = "squats"
-    return start_exercise_async(start_pushups)
+    return start_exercise_async(start_squats)
 
 @app.route("/leaderboarddata")
 def get_leaderboards():

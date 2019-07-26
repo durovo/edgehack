@@ -24,7 +24,8 @@ def BotSpeak(unique_id, text):
     print("unique_id", unique_id)
     ctime = time.time()
     mtime = message_timestamp_dict[unique_id]
-    if ctime - mtime > message_interval or mtime == -1:
+    # 100 is for rep completion
+    if ctime - mtime > message_interval or mtime == -1 or unique_id == 100:
         message_timestamp_dict[unique_id] = time.time()
         print("speaking message ")
         global_queue.put(text)

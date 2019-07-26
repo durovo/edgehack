@@ -46,6 +46,14 @@ class CameraReader(object):
         if not was_read2:
             img2 = np.zeros_like(img1)
         return img1,img2
+    
+    def close_connection(self):
+        was_read1, img1 = self.cap1.read()
+        was_read2, img2 = self.cap2.read()
+        if was_read1:
+            self.cap1.release()
+        if was_read2:
+            self.cap2.release()
 
 class VideoReader(object):
     def __init__(self, file_name):

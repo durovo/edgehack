@@ -12,9 +12,9 @@ class Squats(Exercise):
         back_constraint = Constraint(self.isCorrectBack, self.backToleranceExceeded)
         lowerleg_constraint = Constraint(self.isLowerLegStraight, self.lowerLegToleranceExceeded)
         knee_constraint = Constraint(self.isCorrectKnee, self.kneeToleranceExceeded)
-        self.constraints = [knee_constraint]
+        self.constraints = [knee_constraint, back_constraint, lowerleg_constraint]
         statesList = self.getStates()
-        super(Squats, self).__init__(statesList, "Squats")
+        super(Squats, self).__init__(statesList, tts, "Squats")
         self.RESTANGLE_KNEE = 80
         self.RESTANGLE_BACK = 80
         self.RESTTHIGHANGLE = 80
@@ -79,8 +79,8 @@ class Squats(Exercise):
         return True if self.backAngle is np.nan else self.backAngle> self.MINBACKANGLE
 
     def isCorrectKnee(self,raiseError=None):
-        if raiseError and not self.backAngle is np.nan:
-            self.tts.BotSpeak(4, "Widen knees")            
+        if raiseError and not self.leftThighAngle is np.nan and not self.rightThighAngle is np.nan:
+            self.tts.BotSpeak(4, "Knees too close")            
             print ("Knees too close.", str(self.backAngle))
             self.kneeViolations += 1
         

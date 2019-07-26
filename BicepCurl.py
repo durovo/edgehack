@@ -11,7 +11,7 @@ class BicepCurl(Exercise):
         self.resetViolations()
         self.constraints = [Constraint(self.isCorrectElbow, self.elbowToleranceExceeded), Constraint(self.isCorrectBack, self.backToleranceExceeded)]
         statesList = self.getStates()
-        super(BicepCurl, self).__init__(statesList, "bicepCurl")
+        super(BicepCurl, self).__init__(statesList, tts, "bicepCurl")
         self.RESTANGLE = 150
         self.CONCENTRICANGLE = 140
         self.ACTIVEANGLE = 55

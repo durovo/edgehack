@@ -32,11 +32,10 @@ function updateLeaderBoard(data, exercise)
                 <div class="row-calls">${row[1]}</div>
               </div>
         
-              <div class="leaderboard-footer flex align-center">
-              </div>
-        
             </div>`;
         board.append(row_html);
+        board.append(`<div class="leaderboard-footer flex align-center">
+        </div>`);
         count += 1;
 
     }

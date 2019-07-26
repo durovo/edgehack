@@ -10,7 +10,7 @@ class Pushup(Exercise):
         self.tts = tts
         self.constraints = [Constraint(self.isCorrectBack)]
         statesList = self.getStates()
-        super(Pushup, self).__init__(statesList, "pushup")
+        super(Pushup, self).__init__(statesList, tts, "pushup")
         self.RESTHANDANGLE = 160
         self.RESTBACKANGLE = 160
         self.CONCENTRICANGLE = 140

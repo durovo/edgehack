@@ -2,7 +2,8 @@ import numpy as np
 from Utils.HelperMethods import displayText
 
 class Exercise:
-    def __init__(self, statesList, name = None):
+    def __init__(self, statesList, tts, name = None):
+        self.tts = tts;
         self.stateFlow = statesList
         self.currentState = None
         self.nextState = statesList[0]
@@ -29,11 +30,14 @@ class Exercise:
                     self.isExerciseReset = False
                 else:
                     self.reps += 1
+                    print("speaking rep message")
+                    self.tts.BotSpeak(100, self.reps)
                 
                 print ("rep done. reps: ",str(self.reps))
 
     def reset(self):
         print ("Reseting rep")
+        self.tts.BotSpeak(8, "Wrong rep. Do again")
         self.nextState = self.stateFlow[0]
         self.isExerciseReset = True
         self.resetViolations()

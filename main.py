@@ -78,7 +78,10 @@ def stop_exercise():
     global_state.update_leaderboard()
     global_state.save_leaderboard()
     return jsonify(rep_count = global_state.rep_count)
-
+@app.route("/closeall")
+def close_all():
+    exit()
+    
 def start_exercise_async(excercise_function):
     global_state.name = request.args['name']
     print(global_state.name)
@@ -86,6 +89,7 @@ def start_exercise_async(excercise_function):
     exercise_thread.daemon = True
     exercise_thread.start()
     return jsonify(exercise_status = "started")
+
 
 # @app.route("/bot")
 # def startTrainerBot():

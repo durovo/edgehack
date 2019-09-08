@@ -27,9 +27,9 @@ class GlobalState():
         if os.path.exists(self.bicepcurls_csv):
             self.bicepcurls = pd.read_csv(self.bicepcurls_csv)
     def save_leaderboard(self):
-        self.squats.to_csv(self.squats_csv)
-        self.pushups.to_csv(self.pushups_csv)
-        self.bicepcurls.to_csv(self.bicepcurls_csv)
+        self.squats.to_csv(self.squats_csv, index=False)
+        self.pushups.to_csv(self.pushups_csv, index=False)
+        self.bicepcurls.to_csv(self.bicepcurls_csv, index=False)
     def get_leaderboard(self):
         self.squats = self.squats.sort_values(by=['reps'], ascending=False)
         self.pushups = self.pushups.sort_values(by=['reps'], ascending=False)

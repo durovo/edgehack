@@ -12,7 +12,7 @@ class Squats(Exercise):
         back_constraint = Constraint(self.isCorrectBack, self.backToleranceExceeded)
         lowerleg_constraint = Constraint(self.isLowerLegStraight, self.lowerLegToleranceExceeded)
         knee_constraint = Constraint(self.isCorrectKnee, self.kneeToleranceExceeded)
-        self.constraints = [knee_constraint, back_constraint, lowerleg_constraint]
+        self.constraints = [back_constraint, lowerleg_constraint]
         statesList = self.getStates()
         super(Squats, self).__init__(statesList, tts, "Squats")
         self.RESTANGLE_KNEE = 80

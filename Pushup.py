@@ -8,7 +8,7 @@ from Utils.HelperMethods import displayText
 class Pushup(Exercise):
     def __init__(self,tts):
         self.tts = tts
-        self.constraints = [Constraint(self.isCorrectBack)]
+        self.constraints = [Constraint(self.isCorrectBack, self.toleranceExceeded)]
         statesList = self.getStates()
         super(Pushup, self).__init__(statesList, tts, "pushup")
         self.RESTHANDANGLE = 160

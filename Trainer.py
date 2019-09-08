@@ -61,7 +61,6 @@ class Trainer(object):
             if not cpu:
                 output_frame = np.concatenate((side_frame,front_frame), axis=1)
                 training_output.append(output_frame)
-                print("showing image")
                 cv2.imshow('Output',output_frame)
 
                 key = cv2.waitKey(33)

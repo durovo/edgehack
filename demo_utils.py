@@ -20,7 +20,7 @@ load_state(net, checkpoint)
 
 def get_frameProvider(vid=None):
     if vid is None:
-        frame_provider = CameraReader(2,1)
+        frame_provider = CameraReader(1,2)
     else:
         frame_provider = VideoReader(vid)
     

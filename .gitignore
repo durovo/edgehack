@@ -1,7 +1,6 @@
 *.pyc
 __pycache__
 .idea/
-*.png
 *.mp4
 *.avi
 *.jpg

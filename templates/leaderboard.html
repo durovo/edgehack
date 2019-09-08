@@ -1,0 +1,127 @@
+<html>
+    <header>
+        <title>Leader Board</title>
+        <link rel="stylesheet" href="{{ url_for('static',filename='css/leaderboard.css') }}">
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='js/leaderboard.js') }}"></script> 
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+    </header>
+    <body>
+        
+
+      
+      <div class="content" id="container">
+        
+<div class="leaderboard flex column wrap" id="squats">
+        <div class="leaderboard-table flex column" id="squats_board">
+          <div class="leaderboard-header flex column grow">
+    
+              <div class="filter-by flex grow wrap">
+                <div class="time-filter flex grow">
+                  <div class="row-button pointer row-button--active align-center">Squats</div>
+                </div>
+              </div>
+    
+              <div class="leaderboard-row flex align-center row--header" style="border-radius: 0 !important;">
+                <div class="row-position">Position</div>
+                <div class="row-collapse flex align-center">
+                  <div class="row-user--header">Name</div>
+                </div>
+                <div class="row-calls">Reps</div>
+              </div>
+            </div>
+    
+    
+        <div class="leaderboard-body flex column grow">
+          <div class="leaderboard-row flex align-center">
+            <div class="row-position">1</div>
+            <div class="row-collapse flex align-center">
+              <div class="row-team">John Doe</div>
+            </div>
+            <div class="row-calls">32</div>
+          </div>
+    
+          <div class="leaderboard-footer flex align-center">
+          </div>
+    
+        </div>
+      </div>
+    
+      </div>
+
+    <div class="leaderboard flex column wrap" id="bicepcurls">
+            <div class="leaderboard-table flex column" id='bicepcurls_board'>
+              <div class="leaderboard-header flex column grow">
+        
+                  <div class="filter-by flex grow wrap">
+                    <div class="time-filter flex grow">
+                      <div class="row-button pointer row-button--active align-center">Bicep Curls</div>
+                    </div>
+                  </div>
+        
+                  <div class="leaderboard-row flex align-center row--header" style="border-radius: 0 !important;">
+                    <div class="row-position">Position</div>
+                    <div class="row-collapse flex align-center">
+                      <div class="row-user--header">Name</div>
+                    </div>
+                    <div class="row-calls">Reps</div>
+                  </div>
+                </div>
+        
+        
+            <div class="leaderboard-body flex column grow">
+              <div class="leaderboard-row flex align-center">
+                <div class="row-position">1</div>
+                <div class="row-collapse flex align-center">
+                  <div class="row-team">John Doe</div>
+                </div>
+                <div class="row-calls">32</div>
+              </div>
+        
+              <div class="leaderboard-footer flex align-center">
+              </div>
+        
+            </div>
+          </div>
+        
+          </div>
+        <div class="leaderboard flex column wrap" id="pushups">
+                <div class="leaderboard-table flex column" id='pushups_board'>
+                  <div class="leaderboard-header flex column grow">
+            
+                      <div class="filter-by flex grow wrap">
+                        <div class="time-filter flex grow">
+                          <div class="row-button pointer row-button--active align-center">Pushups</div>
+                        </div>
+                      </div>
+            
+                      <div class="leaderboard-row flex align-center row--header" style="border-radius: 0 !important;">
+                        <div class="row-position">Position</div>
+                        <div class="row-collapse flex align-center">
+                          <div class="row-user--header">Name</div>
+                        </div>
+                        <div class="row-calls">Reps</div>
+                      </div>
+                    </div>
+            
+            
+                <div class="leaderboard-body flex column grow">
+                  <div class="leaderboard-row flex align-center">
+                    <div class="row-position">1</div>
+                    <div class="row-collapse flex align-center">
+                      <div class="row-team">John Doe</div>
+                    </div>
+                    <div class="row-calls">32</div>
+                  </div>
+            
+                  <div class="leaderboard-footer flex align-center">
+                  </div>
+            
+                </div>
+              </div>
+            
+              </div>
+              
+            </div>
+    </body>
+</html>

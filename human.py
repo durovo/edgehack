@@ -16,6 +16,13 @@ EAR = 10
 
 class Human(object):
     def __init__(self):
+        self.side = Skeleton("side")
+        self.front = Skeleton("front")
+    
+
+class Skeleton(object):
+    def __init__(self, view):
+        self.view = view
         self.initPartsDict()
     
     def updatePositions(self, pose_entries, all_keypoints):
@@ -28,9 +35,25 @@ class Human(object):
         fulcrumPoint = self.getPoint(fulcrum,side)
         return fulcrumPoint.getJointAngle(joint1Point, joint2Point)
 
+    def getSlopeAngle(self, joint1, joint2, side = 0):
+        joint1Point = self.getPoint(joint1,side)
+        joint2Point = self.getPoint(joint2,side)
+
+        return joint1Point.getSlopeAngle(joint2Point)     
+
+    def getBodyPartDistance(self,part1,part2, side=0):
+        part1Point = self.getPoint(part1, side)
+        part2Point =  self.getPoint(part2, side)
+
+        return part1Point.distance(part2Point)
+        
     def getCoordinate(self, joint):
         #print(joint)
-        return self.all_keypoints[int(self.pose_entries[self.partIntMap[joint]]), 0:2]
+        keyPointKey = int(self.pose_entries[self.partIntMap[joint]])
+        if keyPointKey >= 0:
+            return self.all_keypoints[keyPointKey, 0:2]
+        else:
+            return None
 
     def getPoint(self, joint, side=0):
         joint = joint+side
@@ -58,7 +81,7 @@ class Human(object):
             210: 17
         }
 
-    def isFacingLeft(self, pose_entries, all_keypoints):
+    def isFacingLeft(self):
         side = LEFT
         part1 = HIP
         part2 = SHOULDER
@@ -67,14 +90,43 @@ class Human(object):
         if part1_global == -1:
             side = RIGHT
             part1_global = self.pose_entries[self.partIntMap[side+part1]]
-        part1 = all_keypoints[int(part1_global), 0:2]
+        part1 = self.all_keypoints[int(part1_global), 0:2]
         part2_global = self.pose_entries[self.partIntMap[side+part2]]
-        part2 = all_keypoints[int(part2_global), 0:2]
+        part2 = self.all_keypoints[int(part2_global), 0:2]
         part3_global = self.pose_entries[self.partIntMap[side+part3]]
-        part3 = all_keypoints[int(part3_global), 0:2]
+        part3 = self.all_keypoints[int(part3_global), 0:2]
 
-        td = part2-part3
         if part2[0] < part1[0]:
             return True
         return False
+
+    def isStandingFacingLeft(self):
+        side = LEFT
+        part1 = EAR
+        part2 = EYE
+        part1_global = self.pose_entries[self.partIntMap[side+part1]]
+        if part1_global == -1:
+            side = RIGHT
+            part1_global = self.pose_entries[self.partIntMap[side+part1]]
+        part1 = self.all_keypoints[int(part1_global), 0:2]
+        part2_global = self.pose_entries[self.partIntMap[side+part2]]
+        part2 = self.all_keypoints[int(part2_global), 0:2]
+
+        if part2[0] < part1[0]:
+            return True
+        return False
+
+    def isBodyHorizontal(self,side):
+        hip = self.getPoint(HIP, side)
+        shoulder = self.getPoint(SHOULDER, side)
+
+        if(shoulder.isNullPoint() or hip.isNullPoint()):
+            return False
+        
+        horizontal_disp = abs(shoulder.coord[0] - hip.coord[0])
+
+        if horizontal_disp > 30:
+            return True
+        else:
+            return False
     

@@ -2,15 +2,33 @@ from Exercise import Exercise
 from State import State
 from Utils.Constants import Direction,BodyParts
 from Constraint import Constraint
+from Utils.HelperMethods import displayText
+import numpy as np
 
 class BicepCurl(Exercise):
-    def __init__(self, human):
-        self.human = human
-        self.side = BodyParts.LEFT.value if human.isFacingLeft(human.pose_entries, human.all_keypoints) else BodyParts.RIGHT.value
-        self.constraints = [Constraint(self.isCorrectElbow), Constraint(self.isCorrectBack)]
-        self.elbowAngle = self.human.getJointAngle(BodyParts.HIP.value, BodyParts.SHOULDER.value, BodyParts.ELBOW.value, self.side)
+    def __init__(self,tts):
+        self.tts = tts
+        self.resetViolations()
+        self.constraints = [Constraint(self.isCorrectElbow, self.elbowToleranceExceeded), Constraint(self.isCorrectBack, self.backToleranceExceeded)]
         statesList = self.getStates()
-        super(BicepCurl, self).__init__(statesList, "bicepCurl")
+        super(BicepCurl, self).__init__(statesList, tts, "bicepCurl")
+        self.RESTANGLE = 150
+        self.CONCENTRICANGLE = 140
+        self.ACTIVEANGLE = 55
+        self.ECCENTRICANGLE = 65
+        self.MAXELBOWVIOLATIONS = 5
+        self.MAXBACKVIOLATIONS = 3
+
+    def resetViolations(self):
+        self.backViolations = 0
+        self.elbowViolations = 0
+
+    def setHuman(self, human):
+        self.human = human
+        self.side = BodyParts.LEFT.value if human.side.isStandingFacingLeft() else BodyParts.RIGHT.value
+        self.elbowAngle = self.getElbowAngle()
+        self.curlAngle = self.getCurlAngle()
+        self.backAngle = self.getBackAngle()
 
     def getStates(self):
         restingState = self.getInitialState()
@@ -21,62 +39,82 @@ class BicepCurl(Exercise):
         return [restingState, concentricState, activeState, eccentricState]
 
     def getElbowAngle(self):
-        return self.human.getJointAngle(BodyParts.HIP.value, BodyParts.SHOULDER.value, BodyParts.ELBOW.value, self.side)
-
+        return self.human.side.getJointAngle(BodyParts.HIP.value, BodyParts.SHOULDER.value, BodyParts.ELBOW.value, self.side)
 
     def getBackAngle(self):
-        return self.human.getJointAngle(BodyParts.HIP.value, BodyParts.SHOULDER.value, BodyParts.ELBOW.value, self.side)
+        return self.human.side.getSlopeAngle(BodyParts.HIP.value, BodyParts.SHOULDER.value, self.side)
 
     def getCurlAngle(self):
-        return self.human.getJointAngle(BodyParts.SHOULDER.value, BodyParts.ELBOW.value, BodyParts.WRIST.value, self.side)
+        curlAngle = self.human.side.getJointAngle(BodyParts.SHOULDER.value, BodyParts.ELBOW.value, BodyParts.WRIST.value, self.side)
+        print(curlAngle)
+        return curlAngle
 
-    def isCorrectElbow(self):
-        return self.getElbowAngle() < 40
+    def elbowToleranceExceeded(self):
+        return self.elbowViolations >= self.MAXELBOWVIOLATIONS
     
-    def isCorrectBack(self):
-        return self.getBackAngle() > 160
+    def backToleranceExceeded(self):
+        return self.backViolations >= self.MAXBACKVIOLATIONS
+
+    def isCorrectElbow(self,raiseError=None):
+        if raiseError and not self.elbowAngle is np.nan:
+            self.elbowViolations += 1
+            self.tts.BotSpeak(1, "Move elbows closer")            
+            print ("Bring your elbow closer to your body. Elbow angle", str(self.elbowAngle))
+        return True if self.elbowAngle is np.nan else self.elbowAngle < 40
+    
+    def isCorrectBack(self,raiseError=None):
+        if raiseError and not self.backAngle is np.nan:
+            self.tts.BotSpeak(2, "Straighten back")            
+            print ("Straighten your back. Back angle", str(self.backAngle))
+            self.backViolations += 1
+        return True if self.backAngle is np.nan else self.backAngle > 80
 
     def isInitialStateReached(self):
-        #TOD): add other checks to see if he is standing
-        if self.getCurlAngle() > 160:
+        #TODO: add other checks to see if he is standing
+        if self.curlAngle > self.RESTANGLE:
             return True
         else:
             return False
 
     def getInitialState(self):
-        state = State(Direction.Rest.value, self.constraints,0, self.isInitialStateReached)
+        state = State(self.constraints,0, self.isInitialStateReached, "Resting")
 
         return state
     
     def isConcentricStateReached(self):
-        if self.getCurlAngle() < 160:
+        if self.curlAngle < self.CONCENTRICANGLE:
             return True
         else:
             return False
 
     def isActiveStateReached(self):
-        if self.getCurlAngle() < 30:
+        if self.curlAngle < self.ACTIVEANGLE:
             return True
         else:
             return False
 
     def getConcentricState(self):
-        state = State(Direction.Concentric.value, self.constraints,1, self.isConcentricStateReached)
+        state = State(self.constraints,1, self.isConcentricStateReached, "Concentric")
         return state
 
     def getActiveState(self):
-        state = State(Direction.Rest.value, self.constraints,2, self.isActiveStateReached)
+        state = State(self.constraints,2, self.isActiveStateReached, "Active")
         return state
     
     def isEccentricStateReached(self):
-        if self.getCurlAngle() > 30:
+        if self.curlAngle > self.ECCENTRICANGLE:
             return True
         else:
             return False
 
     def getEccentricState(self):
-        state = State(Direction.Eccentric.value, self.constraints,3, self.isEccentricStateReached)
+        state = State(self.constraints,3, self.isEccentricStateReached, "Eccentric")
         return state
         
     def continueExercise(self):
-        super().continueExercise(self.getCurlAngle())
+        super().continueExercise(self.curlAngle)
+
+    def displayText(self, frame, view):
+        super().displayText(frame)
+        displayText("Curl angle: "+ str(round(self.curlAngle,2)),50,80,frame)
+        displayText("Back angle: "+ str(round(self.backAngle,2)),50,100,frame)

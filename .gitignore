@@ -1,3 +1,7 @@
 *.pyc
 __pycache__
 .idea/
+*.mp4
+*.avi
+*.jpg
+data/

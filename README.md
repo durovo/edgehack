@@ -1,7 +1,9 @@
-# Edge.Fit --- Intelligent Virtual Trainer
+# Edge.Fit - An Intelligent Virtual Trainer
 # Introduction
 
-This project is a virtual trainer that can help you exercise correctly. It can detect your current posture by using the feed from the camera and then guide you with your selected exercise.
+This project is a virtual trainer that can help you exercise correctly. It can detect your current posture by using feeds from multiple cameras and guide you with your selected exercise. It gives real-time feedback to ensure that you exercise correctly without injuring yourself.
+
+[Demo video](https://www.youtube.com/watch?v=VLFEikGUWUI)
 
 ![](./samples/indexpage.PNG)
 
